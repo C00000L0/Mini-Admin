@@ -47,7 +47,7 @@
   --radius: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: all 0.1s ease;
 }
 
 html {
@@ -93,7 +93,7 @@ table { border-collapse: collapse; width: 100%; }
   align-items: center;
   justify-content: center;
   gap: 24px;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.2s ease;
 }
 
 #splash-screen.hide {
@@ -124,6 +124,11 @@ table { border-collapse: collapse; width: 100%; }
   to { transform: rotate(360deg); }
 }
 
+@keyframes livePulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px #00ff88; }
+  50% { opacity: 0.4; box-shadow: 0 0 3px #00ff88; }
+}
+
 @keyframes splashPulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
@@ -135,60 +140,134 @@ table { border-collapse: collapse; width: 100%; }
   position: fixed;
   inset: 0;
   z-index: 9000;
-  background: var(--bg-primary);
+  background: #03041a;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  overflow: hidden;
 }
 
 #login-screen.active {
   display: flex;
 }
 
+/* Animated star particles background */
+#login-screen::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(80,0,180,0.35) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 50%, rgba(0,80,200,0.3) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 100%, rgba(255,180,0,0.15) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Circuit lines decoration */
+#login-screen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,120,255,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,120,255,0.07) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none;
+}
+
 .login-container {
   width: 100%;
-  max-width: 420px;
-  background: var(--card-bg);
-  border: 1px solid var(--border-yellow);
-  border-radius: var(--radius-xl);
+  max-width: 440px;
+  background: rgba(5, 8, 35, 0.85);
+  border: 1.5px solid rgba(120, 60, 255, 0.6);
+  border-radius: 20px;
   padding: 48px 36px;
   position: relative;
   overflow: hidden;
+  box-shadow:
+    0 0 40px rgba(100, 40, 255, 0.3),
+    0 0 80px rgba(0, 100, 255, 0.15),
+    inset 0 0 30px rgba(80, 0, 200, 0.1);
+  z-index: 1;
+  backdrop-filter: blur(10px);
 }
 
+/* Top glow line */
 .login-container::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, var(--primary), transparent);
-  box-shadow: var(--glow-yellow);
+  top: 0; left: 10%; right: 10%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #FFD700, #ff9500, #FFD700, transparent);
+  box-shadow: 0 0 20px rgba(255,215,0,0.8), 0 0 40px rgba(255,150,0,0.4);
+}
+
+/* Corner accents */
+.login-container::after {
+  content: '';
+  position: absolute;
+  top: -1px; right: -1px;
+  width: 60px; height: 60px;
+  border-top: 2px solid rgba(180,100,255,0.8);
+  border-right: 2px solid rgba(180,100,255,0.8);
+  border-radius: 0 20px 0 0;
 }
 
 .login-logo {
   text-align: center;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .login-logo span {
   font-family: var(--font-heading);
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 900;
   color: var(--primary);
-  text-shadow: var(--glow-yellow);
-  letter-spacing: 1.5px;
+  text-shadow: 0 0 20px rgba(255,215,0,0.8), 0 0 40px rgba(255,150,0,0.4);
+  letter-spacing: 2px;
 }
 
 .login-subtitle {
   text-align: center;
-  font-size: 14px;
-  color: var(--text-muted);
+  font-size: 12px;
+  color: rgba(200,200,255,0.6);
   margin-bottom: 36px;
   font-weight: 500;
-  letter-spacing: 3px;
+  letter-spacing: 4px;
   text-transform: uppercase;
+}
+
+/* Input icons wrapper */
+.login-input-wrap {
+  position: relative;
+}
+
+.login-input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.login-input-wrap .form-input {
+  padding-left: 44px;
+  background: rgba(0,5,30,0.8);
+  border: 1.5px solid rgba(100,150,255,0.4);
+  border-radius: 12px;
+  color: #fff;
+  font-size: 15px;
+  transition: all 0.3s;
+}
+
+.login-input-wrap .form-input:focus {
+  border-color: rgba(100,150,255,0.9);
+  box-shadow: 0 0 0 3px rgba(80,100,255,0.15), 0 0 15px rgba(80,100,255,0.2);
+}
+
+.login-input-wrap .form-input::placeholder {
+  color: rgba(150,160,200,0.5);
 }
 
 .login-error {
@@ -206,6 +285,50 @@ table { border-collapse: collapse; width: 100%; }
 
 .login-error.show {
   display: block;
+}
+
+/* SIGN IN button */
+#login-btn {
+  background: linear-gradient(135deg, #FFB800, #FFD700, #FF9500);
+  color: #000;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  border-radius: 12px;
+  padding: 16px;
+  border: none;
+  width: 100%;
+  margin-top: 8px;
+  box-shadow: 0 0 25px rgba(255,200,0,0.5), 0 0 50px rgba(255,150,0,0.2);
+  transition: all 0.3s;
+  text-transform: uppercase;
+}
+
+#login-btn:hover {
+  box-shadow: 0 0 35px rgba(255,200,0,0.7), 0 0 70px rgba(255,150,0,0.3);
+  transform: translateY(-2px);
+}
+
+#login-btn:active {
+  transform: translateY(0);
+}
+
+/* Floating particles */
+@keyframes floatParticle {
+  0% { transform: translateY(100vh) scale(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 0.5; }
+  100% { transform: translateY(-10px) scale(1); opacity: 0; }
+}
+
+.login-particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(255,200,0,0.7);
+  animation: floatParticle linear infinite;
+  pointer-events: none;
 }
 
 .form-group {
@@ -231,7 +354,7 @@ table { border-collapse: collapse; width: 100%; }
   color: var(--text-primary);
   font-size: 15px;
   font-weight: 500;
-  transition: var(--transition);
+  transition: all 0.1s ease;
 }
 
 .form-input:focus {
@@ -254,10 +377,14 @@ table { border-collapse: collapse; width: 100%; }
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-  transition: var(--transition);
+  transition: all 0.1s ease;
   white-space: nowrap;
   position: relative;
   overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  will-change: transform;
+  cursor: pointer;
 }
 
 .btn-primary {
@@ -353,7 +480,7 @@ table { border-collapse: collapse; width: 100%; }
   border: 2px solid rgba(0,0,0,0.2);
   border-top-color: currentColor;
   border-radius: 50%;
-  animation: spin 0.6s linear infinite;
+  animation: spin 0.4s linear infinite;
   margin-left: 8px;
 }
 
@@ -382,7 +509,7 @@ table { border-collapse: collapse; width: 100%; }
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
-  transition: transform 0.3s ease;
+  transition: transform 0.15s ease;
 }
 
 .sidebar::before {
@@ -500,7 +627,7 @@ table { border-collapse: collapse; width: 100%; }
   gap: 12px;
   padding: 12px 24px;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.1s ease;
   position: relative;
   font-size: 15px;
   font-weight: 500;
@@ -534,10 +661,11 @@ table { border-collapse: collapse; width: 100%; }
 }
 
 .nav-item-icon {
-  font-size: 18px;
+  font-size: 20px;
   width: 24px;
   text-align: center;
   flex-shrink: 0;
+  font-weight: 700;
 }
 
 .nav-item-text {
@@ -601,7 +729,7 @@ table { border-collapse: collapse; width: 100%; }
   color: var(--primary);
   font-size: 22px;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.1s ease;
   flex-shrink: 0;
 }
 
@@ -636,7 +764,7 @@ table { border-collapse: collapse; width: 100%; }
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.7);
-  z-index: 999;
+  z-index: 998;
   backdrop-filter: blur(4px);
 }
 
@@ -709,7 +837,7 @@ table { border-collapse: collapse; width: 100%; }
   padding: 24px;
   position: relative;
   overflow: hidden;
-  transition: var(--transition);
+  transition: all 0.1s ease;
 }
 
 .stat-card:hover {
@@ -847,7 +975,7 @@ table { border-collapse: collapse; width: 100%; }
 
 .data-table tbody tr {
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  transition: var(--transition);
+  transition: all 0.1s ease;
 }
 
 .data-table tbody tr:hover {
@@ -890,7 +1018,7 @@ table { border-collapse: collapse; width: 100%; }
   font-weight: 600;
   color: var(--text-muted);
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.1s ease;
   white-space: nowrap;
   background: transparent;
   border: none;
@@ -922,7 +1050,7 @@ table { border-collapse: collapse; width: 100%; }
   color: var(--text-primary);
   font-size: 14px;
   font-weight: 500;
-  transition: var(--transition);
+  transition: all 0.1s ease;
 }
 
 .search-box input:focus {
@@ -1076,7 +1204,7 @@ table { border-collapse: collapse; width: 100%; }
   color: var(--text-muted);
   font-size: 18px;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.1s ease;
 }
 
 .modal-close:hover {
@@ -1121,7 +1249,7 @@ table { border-collapse: collapse; width: 100%; }
   color: var(--text-primary);
   font-size: 14px;
   font-weight: 500;
-  transition: var(--transition);
+  transition: all 0.1s ease;
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23FFD700' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -1145,7 +1273,7 @@ table { border-collapse: collapse; width: 100%; }
   font-weight: 500;
   resize: vertical;
   min-height: 100px;
-  transition: var(--transition);
+  transition: all 0.1s ease;
   font-family: var(--font-body);
 }
 
@@ -1168,7 +1296,7 @@ table { border-collapse: collapse; width: 100%; }
   border: 1px solid var(--border-yellow);
   border-radius: 12px;
   position: relative;
-  transition: var(--transition);
+  transition: all 0.1s ease;
   flex-shrink: 0;
 }
 
@@ -1181,7 +1309,7 @@ table { border-collapse: collapse; width: 100%; }
   height: 16px;
   background: var(--text-muted);
   border-radius: 50%;
-  transition: var(--transition);
+  transition: all 0.1s ease;
 }
 
 .form-toggle input {
@@ -1299,7 +1427,7 @@ table { border-collapse: collapse; width: 100%; }
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.1s ease;
 }
 
 .pagination-btn:hover:not(:disabled) {
@@ -1486,7 +1614,7 @@ table { border-collapse: collapse; width: 100%; }
   object-fit: cover;
   border: 1px solid var(--border-yellow);
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.1s ease;
 }
 
 .img-thumb:hover {
@@ -1580,7 +1708,7 @@ table { border-collapse: collapse; width: 100%; }
   font-weight: 700;
   color: var(--text-muted);
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.1s ease;
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
@@ -1772,6 +1900,14 @@ table { border-collapse: collapse; width: 100%; }
 
 <!-- ===== LOGIN SCREEN ===== -->
 <div id="login-screen">
+  <!-- Floating particles -->
+  <div class="login-particle" style="left:10%;animation-duration:8s;animation-delay:0s;background:rgba(255,200,0,0.8);"></div>
+  <div class="login-particle" style="left:25%;animation-duration:11s;animation-delay:2s;background:rgba(100,150,255,0.8);"></div>
+  <div class="login-particle" style="left:45%;animation-duration:7s;animation-delay:1s;background:rgba(200,100,255,0.8);"></div>
+  <div class="login-particle" style="left:65%;animation-duration:13s;animation-delay:3s;background:rgba(255,200,0,0.6);"></div>
+  <div class="login-particle" style="left:80%;animation-duration:9s;animation-delay:0.5s;background:rgba(100,200,255,0.8);"></div>
+  <div class="login-particle" style="left:90%;animation-duration:12s;animation-delay:4s;background:rgba(255,150,0,0.7);"></div>
+
   <div class="login-container">
     <div class="login-logo">
       <span>⚡ MINI eSPORTS</span>
@@ -1783,14 +1919,20 @@ table { border-collapse: collapse; width: 100%; }
     <form id="login-form" autocomplete="off">
       <div class="form-group">
         <label class="form-label">Email Address</label>
-        <input type="email" class="form-input" id="login-email" placeholder="admin@miniesports.com" required>
+        <div class="login-input-wrap">
+          <span class="login-input-icon">✉️</span>
+          <input type="email" class="form-input" id="login-email" placeholder="admin@miniesports.com" required>
+        </div>
       </div>
       <div class="form-group">
         <label class="form-label">Password</label>
-        <input type="password" class="form-input" id="login-password" placeholder="Enter admin password" required>
+        <div class="login-input-wrap">
+          <span class="login-input-icon">⊠</span>
+          <input type="password" class="form-input" id="login-password" placeholder="Enter admin password" required>
+        </div>
       </div>
-      <button type="submit" class="btn btn-primary btn-lg btn-full" id="login-btn">
-        🔐 Sign In
+      <button type="submit" id="login-btn">
+        ⚿ SIGN IN
       </button>
     </form>
   </div>
@@ -1799,7 +1941,7 @@ table { border-collapse: collapse; width: 100%; }
 <!-- ===== CONFIRM DIALOG ===== -->
 <div class="confirm-overlay" id="confirm-overlay">
   <div class="confirm-dialog">
-    <div class="confirm-icon" id="confirm-icon">⚠️</div>
+    <div class="confirm-icon" id="confirm-icon">!</div>
     <div class="confirm-title" id="confirm-title">Are you sure?</div>
     <div class="confirm-message" id="confirm-message">This action cannot be undone.</div>
     <div class="confirm-actions">
@@ -1822,9 +1964,9 @@ table { border-collapse: collapse; width: 100%; }
 
   <!-- ===== TOPBAR (Mobile) ===== -->
   <div class="topbar">
-    <button class="topbar-hamburger" id="topbar-hamburger">☰</button>
+    <!-- hamburger removed - use swipe gesture instead -->
     <div class="topbar-title" id="topbar-title">Dashboard</div>
-    <div class="topbar-email" id="topbar-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7110151c181f311409101c011d145f121e1c">[email&#160;protected]</a></div>
+    <button id="topbar-refresh" onclick="refreshCurrentSection()" title="Refresh" style="background:transparent;border:1px solid rgba(255,215,0,0.3);border-radius:8px;color:var(--primary);width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,215,0,0.1)'" onmouseout="this.style.background='transparent'">↻</button>
   </div>
 
   <!-- ===== SIDEBAR ===== -->
@@ -1837,94 +1979,107 @@ table { border-collapse: collapse; width: 100%; }
           <small>Admin Panel</small>
         </div>
       </div>
-      <div class="sidebar-admin">
-        <div class="sidebar-admin-avatar" id="sidebar-avatar">A</div>
-        <div class="sidebar-admin-info">
-          <div class="sidebar-admin-name" id="sidebar-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fd9c99909493bd98859c908d9198d39e9290">[email&#160;protected]</a></div>
-          <div class="sidebar-admin-role">Super Admin</div>
-        </div>
-      </div>
+
     </div>
 
     <div class="sidebar-nav">
       <div class="nav-section-title">Main</div>
 
-      <div class="nav-item active" data-section="dashboard">
-        <span class="nav-item-icon">📊</span>
+      <div class="nav-item active" onclick="showSection('dashboard')" data-section="dashboard">
+        <span class="nav-item-icon" style="color:inherit">▪</span>
         <span class="nav-item-text">Dashboard</span>
       </div>
 
       <div class="nav-section-title">Requests</div>
 
-      <div class="nav-item" data-section="profile-verification">
-        <span class="nav-item-icon">✅</span>
+      <div class="nav-item" onclick="showSection('profile-verification')" data-section="profile-verification">
+        <span class="nav-item-icon" style="color:inherit">✓</span>
         <span class="nav-item-text">Profile Verification</span>
         <span class="nav-badge" id="badge-profile-verification">0</span>
       </div>
 
-      <div class="nav-item" data-section="profile-updates">
-        <span class="nav-item-icon">🔄</span>
+      <div class="nav-item" onclick="showSection('profile-updates')" data-section="profile-updates">
+        <span class="nav-item-icon" style="color:inherit">↻</span>
         <span class="nav-item-text">Profile Updates</span>
         <span class="nav-badge" id="badge-profile-updates">0</span>
       </div>
 
-      <div class="nav-item" data-section="join-requests">
-        <span class="nav-item-icon">📋</span>
-        <span class="nav-item-text">Join Requests</span>
-        <span class="nav-badge" id="badge-join-requests">0</span>
-      </div>
-
-      <div class="nav-item" data-section="wallet-requests">
-        <span class="nav-item-icon">💰</span>
+      <div class="nav-item" onclick="showSection('wallet-requests')" data-section="wallet-requests">
+        <span class="nav-item-icon" style="color:inherit">₹</span>
         <span class="nav-item-text">Wallet Requests</span>
         <span class="nav-badge" id="badge-wallet-requests">0</span>
       </div>
 
-      <div class="nav-item" data-section="team-requests">
-        <span class="nav-item-icon">👫</span>
+      <div class="nav-item" onclick="showSection('team-requests')" data-section="team-requests">
+        <span class="nav-item-icon" style="color:inherit">⊕</span>
         <span class="nav-item-text">Team Requests</span>
         <span class="nav-badge" id="badge-team-requests">0</span>
       </div>
 
-      <div class="nav-item" data-section="support-requests">
-        <span class="nav-item-icon">🎧</span>
-        <span class="nav-item-text">Support Requests</span>
-        <span class="nav-badge" id="badge-support-requests">0</span>
-      </div>
-
       <div class="nav-section-title">Management</div>
 
-      <div class="nav-item" data-section="users">
-        <span class="nav-item-icon">👥</span>
+      <div class="nav-item" onclick="showSection('users')" data-section="users">
+        <span class="nav-item-icon" style="color:inherit">⊞</span>
         <span class="nav-item-text">Users</span>
       </div>
 
-      <div class="nav-item" data-section="tournaments">
-        <span class="nav-item-icon">🏆</span>
+      <div class="nav-item" onclick="showSection('tournaments')" data-section="tournaments">
+        <span class="nav-item-icon" style="color:inherit">★</span>
         <span class="nav-item-text">Tournaments</span>
       </div>
 
-      <div class="nav-item" data-section="match-results">
-        <span class="nav-item-icon">🎯</span>
+      <div class="nav-item" onclick="showSection('match-results')" data-section="match-results">
+        <span class="nav-item-icon" style="color:inherit">◎</span>
         <span class="nav-item-text">Match Results</span>
       </div>
 
       <div class="nav-section-title">System</div>
 
-      <div class="nav-item" data-section="notifications">
-        <span class="nav-item-icon">🔔</span>
-        <span class="nav-item-text">Notifications</span>
-      </div>
-
-      <div class="nav-item" data-section="settings">
-        <span class="nav-item-icon">⚙️</span>
+      <div class="nav-item" onclick="showSection('settings')" data-section="settings">
+        <span class="nav-item-icon" style="color:inherit">⚙</span>
         <span class="nav-item-text">Settings</span>
       </div>
 
-      <div class="nav-item-logout">
-        <div class="nav-item" id="logout-btn">
-          <span class="nav-item-icon">🚪</span>
-          <span class="nav-item-text">Logout</span>
+      <div class="nav-item" onclick="showSection('support-requests')" data-section="support-requests">
+        <span class="nav-item-icon" style="color:inherit">⊛</span>
+        <span class="nav-item-text">Support Requests</span>
+        <span class="nav-badge" id="badge-support-requests">0</span>
+      </div>
+
+      <div class="nav-item" onclick="showSection('voucher-management')" data-section="voucher-management">
+        <span class="nav-item-icon" style="color:inherit">◈</span>
+        <span class="nav-item-text">Vouchers</span>
+      </div>
+
+      <div class="nav-item" onclick="showSection('referral-management')" data-section="referral-management">
+        <span class="nav-item-icon" style="color:inherit">⊛</span>
+        <span class="nav-item-text">Referrals</span>
+        <span class="nav-badge" id="badge-referrals">0</span>
+      </div>
+
+      <div class="nav-item" onclick="showSection('financial-report')" data-section="financial-report">
+        <span class="nav-item-icon" style="color:inherit">₹</span>
+        <span class="nav-item-text">Financial Report</span>
+      </div>
+
+      <div class="nav-item" onclick="showSection('audit-log')" data-section="audit-log">
+        <span class="nav-item-icon" style="color:inherit">≡</span>
+        <span class="nav-item-text">Audit Log</span>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:0;border-top:1px solid rgba(255,215,0,0.1);margin-top:8px;padding-top:8px;">
+        <!-- Logout button left -->
+        <div id="logout-btn" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 14px;cursor:pointer;color:var(--danger);transition:all 0.2s;border-right:1px solid rgba(255,255,255,0.06);flex-shrink:0;" onmouseover="this.style.background='rgba(255,0,0,0.08)'" onmouseout="this.style.background='transparent'">
+          <span style="font-size:20px;font-weight:700;">⏻</span>
+          <span style="font-size:9px;margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Logout</span>
+        </div>
+        <!-- Admin info right -->
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;flex:1;min-width:0;">
+          <div id="sidebar-avatar" style="width:34px;height:34px;border-radius:50%;background:var(--primary);color:#000;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">A</div>
+          <div style="min-width:0;">
+            <div id="sidebar-email" style="font-size:11px;color:#fff;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+            <div style="font-size:10px;color:var(--primary);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;">Super Admin</div>
+          </div>
         </div>
       </div>
     </div>
@@ -1937,34 +2092,123 @@ table { border-collapse: collapse; width: 100%; }
       <!-- ========== SECTION: DASHBOARD ========== -->
       <div class="section-page active" id="section-dashboard">
         <div class="page-header">
-          <h1 class="page-title"><span class="page-title-icon">📊</span>Dashboard</h1>
+          <h1 class="page-title"><span class="page-title-icon" style="color:var(--primary)">▪</span>Dashboard</h1>
           <div class="page-actions">
-            <button class="btn btn-outline btn-sm" id="refresh-dashboard">🔄 Refresh</button>
+            <button class="btn btn-outline btn-sm" id="refresh-dashboard">↻ Refresh</button>
           </div>
         </div>
 
-        <!-- Stats Cards -->
-        <div class="stats-grid">
-          <div class="stat-card yellow">
-            <div class="stat-card-icon">👥</div>
-            <div class="stat-card-value" id="stat-users">0</div>
-            <div class="stat-card-label">Total Users</div>
+        <!-- ROW 1: Users & Teams + Tournaments -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+
+          <!-- Users & Teams Block -->
+          <div style="background:var(--card-bg);border:1px solid rgba(100,180,255,0.25);border-radius:14px;padding:16px;">
+            <div style="font-size:13px;font-weight:700;color:#64b4ff;margin-bottom:12px;display:flex;align-items:center;gap:6px;">⊞ Users &amp; Teams</div>
+            <div style="background:rgba(100,180,255,0.07);border-radius:10px;padding:12px;margin-bottom:10px;">
+              <div style="font-size:11px;color:#aaa;margin-bottom:4px;">○ Total Users</div>
+              <div style="font-size:26px;font-weight:900;color:#64b4ff;" id="stat-users">0</div>
+            </div>
+            <div style="font-size:11px;color:#aaa;margin-bottom:6px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span>● Solo Players</span><span style="color:#64b4ff;font-weight:700;" id="stat-solo">0</span></div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span>● Duo Teams</span><span style="color:#64b4ff;font-weight:700;" id="stat-duo">0</span></div>
+              <div style="display:flex;justify-content:space-between;"><span>● Squad Teams</span><span style="color:#64b4ff;font-weight:700;" id="stat-squad">0</span></div>
+            </div>
+            <div style="background:rgba(0,200,100,0.07);border:1px solid rgba(0,200,100,0.2);border-radius:10px;padding:10px;margin-top:10px;">
+              <div style="font-size:11px;color:#aaa;">↑ New Registrations Today</div>
+              <div style="font-size:22px;font-weight:900;color:#00c864;" id="stat-new-today">0</div>
+            </div>
           </div>
-          <div class="stat-card yellow">
-            <div class="stat-card-icon">🏆</div>
-            <div class="stat-card-value" id="stat-tournaments">0</div>
-            <div class="stat-card-label">Active Tournaments</div>
+
+          <!-- Tournaments Block -->
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="background:var(--card-bg);border:1px solid rgba(255,215,0,0.25);border-radius:14px;padding:16px;flex:1;">
+              <div style="font-size:13px;font-weight:700;color:var(--primary);margin-bottom:8px;">★ Tournaments</div>
+              <div style="font-size:11px;color:#aaa;margin-bottom:4px;">★ Upcoming Tournaments</div>
+              <div style="font-size:26px;font-weight:900;color:var(--primary);" id="stat-upcoming-tours">0</div>
+            </div>
+            <div style="background:var(--card-bg);border:1px solid rgba(255,215,0,0.25);border-radius:14px;padding:16px;flex:1;">
+              <div style="font-size:11px;color:#aaa;margin-bottom:4px;">★ Completed Tournaments</div>
+              <div style="font-size:26px;font-weight:900;color:var(--primary);" id="stat-completed-tours">0</div>
+            </div>
           </div>
-          <div class="stat-card red">
-            <div class="stat-card-icon">⏳</div>
-            <div class="stat-card-value" id="stat-pending">0</div>
-            <div class="stat-card-label">Pending Requests</div>
+        </div>
+
+        <!-- ROW 2: Pending Requests -->
+        <div style="background:var(--card-bg);border:1px solid rgba(180,100,255,0.3);border-radius:14px;padding:16px;margin-bottom:14px;">
+          <div style="font-size:13px;font-weight:700;color:#b464ff;margin-bottom:12px;">✦ Pending Requests</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+            <div style="background:rgba(180,100,255,0.08);border:1px solid rgba(180,100,255,0.2);border-radius:10px;padding:12px;">
+              <div style="font-size:11px;color:#aaa;margin-bottom:4px;">✓ Withdrawal Requests</div>
+              <div style="font-size:22px;font-weight:900;color:#b464ff;" id="stat-withdraw-pending">0</div>
+            </div>
+            <div style="background:rgba(180,100,255,0.08);border:1px solid rgba(180,100,255,0.2);border-radius:10px;padding:12px;">
+              <div style="font-size:11px;color:#aaa;margin-bottom:4px;">≡ Deposit Requests</div>
+              <div style="font-size:22px;font-weight:900;color:#b464ff;" id="stat-deposit-pending">0</div>
+            </div>
           </div>
-          <div class="stat-card yellow">
-            <div class="stat-card-icon">💰</div>
-            <div class="stat-card-value" id="stat-prizepool">₹0</div>
-            <div class="stat-card-label">Total Prize Pool</div>
+          <div style="background:rgba(180,100,255,0.08);border:1px solid rgba(180,100,255,0.2);border-radius:10px;padding:12px;">
+            <div style="font-size:11px;color:#aaa;margin-bottom:4px;">⊙ Profile Verification Requests</div>
+            <div style="font-size:22px;font-weight:900;color:#b464ff;" id="stat-profile-pending">0</div>
           </div>
+        </div>
+
+        <!-- ROW 3: Finance x2 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+          <!-- Finance Left -->
+          <div style="background:var(--card-bg);border:1px solid rgba(255,215,0,0.2);border-radius:14px;padding:16px;">
+            <div style="font-size:13px;font-weight:700;color:var(--primary);margin-bottom:12px;">₹ Finance</div>
+            <div style="background:rgba(255,215,0,0.05);border-radius:10px;padding:10px;margin-bottom:8px;">
+              <div style="font-size:11px;color:#aaa;display:flex;align-items:center;gap:4px;">▼ Total Withdrawals Paid</div>
+              <div style="font-size:16px;font-weight:800;color:#fff;margin-top:2px;">₹<span id="stat-total-withdrawn">0</span></div>
+            </div>
+            <div style="background:rgba(255,215,0,0.05);border-radius:10px;padding:10px;">
+              <div style="font-size:11px;color:#aaa;display:flex;align-items:center;gap:4px;">▲ Total Deposits Received</div>
+              <div style="font-size:16px;font-weight:800;color:#fff;margin-top:2px;">₹<span id="stat-total-deposited">0</span></div>
+            </div>
+          </div>
+          <!-- Finance Right -->
+          <div style="background:var(--card-bg);border:1px solid rgba(255,215,0,0.2);border-radius:14px;padding:16px;">
+            <div style="font-size:13px;font-weight:700;color:var(--primary);margin-bottom:12px;">$ Finance</div>
+            <div style="background:rgba(255,215,0,0.05);border:1px solid rgba(255,215,0,0.15);border-radius:10px;padding:10px;margin-bottom:8px;">
+              <div style="font-size:11px;color:#aaa;">$ Total Balance</div>
+              <div style="font-size:16px;font-weight:800;color:var(--primary);margin-top:2px;">₹<span id="stat-total-balance">0</span></div>
+            </div>
+            <div style="background:rgba(255,215,0,0.05);border:1px solid rgba(255,215,0,0.15);border-radius:10px;padding:10px;">
+              <div style="font-size:11px;color:#aaa;">$ Net Balance</div>
+              <div style="font-size:16px;font-weight:800;color:var(--primary);margin-top:2px;">₹<span id="stat-net-balance">0</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROW 4: Banned + Matches Today + Online -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+          <div style="background:var(--card-bg);border:1px solid rgba(255,0,0,0.25);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;">
+            <span style="font-size:22px;">✕</span>
+            <div>
+              <div style="font-size:11px;color:#aaa;">Banned Users Count</div>
+              <div style="font-size:22px;font-weight:900;color:#ff4444;" id="stat-banned">0</div>
+            </div>
+          </div>
+          <div style="background:var(--card-bg);border:1px solid rgba(255,215,0,0.2);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;">
+            <span style="font-size:22px;">◎</span>
+            <div>
+              <div style="font-size:11px;color:#aaa;">Total Matches Played Today</div>
+              <div style="font-size:22px;font-weight:900;color:var(--primary);" id="stat-matches-today">0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROW 5: Active Players Online -->
+        <div style="background:var(--card-bg);border:1px solid rgba(180,100,255,0.3);border-radius:14px;padding:16px;margin-bottom:14px;display:flex;align-items:center;gap:14px;">
+          <span style="font-size:28px;">◈</span>
+          <div>
+            <div style="font-size:12px;color:#aaa;">Active Players Right Now</div>
+            <div style="font-size:26px;font-weight:900;color:#b464ff;">
+              <span id="stat-online">0</span>
+              <span style="font-size:13px;color:#888;font-weight:400;margin-left:4px;">(online)</span>
+            </div>
+          </div>
+          <div style="margin-left:auto;width:10px;height:10px;border-radius:50%;background:#00ff88;box-shadow:0 0 8px #00ff88;animation:livePulse 1.5s infinite;"></div>
         </div>
 
         <!-- Recent Activity -->
@@ -1979,7 +2223,7 @@ table { border-collapse: collapse; width: 100%; }
             </div>
             <div class="activity-list" id="activity-list" style="display:none;"></div>
             <div class="table-empty" id="activity-empty" style="display:none;">
-              <div class="table-empty-icon">📭</div>
+              <div class="table-empty-icon">✉</div>
               <div class="table-empty-text">No recent activity</div>
               <div class="table-empty-sub">Actions will appear here as they happen</div>
             </div>
@@ -1990,14 +2234,16 @@ table { border-collapse: collapse; width: 100%; }
       <!-- ========== SECTION: PROFILE VERIFICATION ========== -->
       <div class="section-page" id="section-profile-verification">
         <div class="page-header">
-          <h1 class="page-title"><span class="page-title-icon">✅</span>Profile Verification</h1>
-        </div>
+          <h1 class="page-title"><span class="page-title-icon" style="color:#00cc44">✓</span>Profile Verification</h1>
+          <div class="page-actions">
+            <button class="btn btn-primary btn-sm" onclick="bulkApproveProfiles()">✓ Approve All Pending</button>
+          </div>
 
         <div class="panel">
           <div class="panel-header">
             <h3 class="panel-title">Pending Verifications</h3>
             <div class="search-box">
-              <span class="search-box-icon">🔍</span>
+              <span class="search-box-icon">⌕</span>
               <input type="text" placeholder="Search by name or email..." id="search-profile-verification">
             </div>
           </div>
@@ -2020,7 +2266,10 @@ table { border-collapse: collapse; width: 100%; }
               <tbody id="profile-verification-tbody"></tbody>
             </table>
             <div class="table-empty" id="profile-verification-empty" style="display:none;">
-              <div class="table-empty-icon">✅</div>
+                <div style="font-size:40px;margin-bottom:12px;">✅</div>
+                <div style="font-size:15px;font-weight:700;color:#888;margin-bottom:6px;">No Pending Verifications</div>
+                <div style="font-size:12px;color:#555;">Naye users ki verification requests yahan aayegi</div>
+              </div>
               <div class="table-empty-text">No pending verifications</div>
               <div class="table-empty-sub">All profiles have been reviewed</div>
             </div>
@@ -2038,14 +2287,14 @@ table { border-collapse: collapse; width: 100%; }
       <!-- ========== SECTION: PROFILE UPDATES ========== -->
       <div class="section-page" id="section-profile-updates">
         <div class="page-header">
-          <h1 class="page-title"><span class="page-title-icon">🔄</span>Profile Update Requests</h1>
+          <h1 class="page-title"><span class="page-title-icon" style="color:var(--primary)">↻</span>Profile Update Requests</h1>
         </div>
 
         <div class="panel">
           <div class="panel-header">
             <h3 class="panel-title">Pending Updates</h3>
             <div class="search-box">
-              <span class="search-box-icon">🔍</span>
+              <span class="search-box-icon">⌕</span>
               <input type="text" placeholder="Search by name..." id="search-profile-updates">
             </div>
           </div>
@@ -2068,7 +2317,10 @@ table { border-collapse: collapse; width: 100%; }
               <tbody id="profile-updates-tbody"></tbody>
             </table>
             <div class="table-empty" id="profile-updates-empty" style="display:none;">
-              <div class="table-empty-icon">🔄</div>
+                <div style="font-size:40px;margin-bottom:12px;">🔄</div>
+                <div style="font-size:15px;font-weight:700;color:#888;margin-bottom:6px;">No Profile Update Requests</div>
+                <div style="font-size:12px;color:#555;">Users ki profile update requests yahan dikhegi</div>
+              </div>
               <div class="table-empty-text">No pending update requests</div>
               <div class="table-empty-sub">All profile updates have been processed</div>
             </div>
@@ -2086,14 +2338,16 @@ table { border-collapse: collapse; width: 100%; }
       <!-- ========== SECTION: USERS ========== -->
       <div class="section-page" id="section-users">
         <div class="page-header">
-          <h1 class="page-title"><span class="page-title-icon">👥</span>Users Management</h1>
-        </div>
+          <h1 class="page-title"><span class="page-title-icon" style="color:var(--primary)">⊞</span>Users Management</h1>
+          <div class="page-actions">
+            <button class="btn btn-outline btn-sm" onclick="exportUsersCSV()">↓ Export CSV</button>
+          </div>
 
         <div class="panel">
           <div class="panel-header">
             <h3 class="panel-title">All Users</h3>
             <div class="search-box">
-              <span class="search-box-icon">🔍</span>
+              <span class="search-box-icon">⌕</span>
               <input type="text" placeholder="Search users by name, email, IGN..." id="search-users">
             </div>
           </div>
@@ -2118,7 +2372,10 @@ table { border-collapse: collapse; width: 100%; }
               <tbody id="users-tbody"></tbody>
             </table>
             <div class="table-empty" id="users-empty" style="display:none;">
-              <div class="table-empty-icon">👥</div>
+                <div style="font-size:40px;margin-bottom:12px;">👥</div>
+                <div style="font-size:15px;font-weight:700;color:#888;margin-bottom:6px;">No Users Yet</div>
+                <div style="font-size:12px;color:#555;">Registered users yahan dikhenge</div>
+              </div>
               <div class="table-empty-text">No users found</div>
               <div class="table-empty-sub">Users will appear here once they register</div>
             </div>
@@ -2136,7 +2393,7 @@ table { border-collapse: collapse; width: 100%; }
       <!-- ========== SECTION: TOURNAMENTS ========== -->
       <div class="section-page" id="section-tournaments">
         <div class="page-header">
-          <h1 class="page-title"><span class="page-title-icon">🏆</span>Tournaments</h1>
+          <h1 class="page-title"><span class="page-title-icon" style="color:var(--primary)">★</span>Tournaments</h1>
           <div class="page-actions">
             <button class="btn btn-primary btn-sm" id="create-tournament-btn">+ Create Tournament</button>
           </div>
@@ -2146,7 +2403,7 @@ table { border-collapse: collapse; width: 100%; }
           <div class="panel-header">
             <h3 class="panel-title">All Tournaments</h3>
             <div class="search-box">
-              <span class="search-box-icon">🔍</span>
+              <span class="search-box-icon">⌕</span>
               <input type="text" placeholder="Search tournaments..." id="search-tournaments">
             </div>
           </div>
@@ -2173,7 +2430,10 @@ table { border-collapse: collapse; width: 100%; }
               <tbody id="tournaments-tbody"></tbody>
             </table>
             <div class="table-empty" id="tournaments-empty" style="display:none;">
-              <div class="table-empty-icon">🏆</div>
+                <div style="font-size:40px;margin-bottom:12px;">🏆</div>
+                <div style="font-size:15px;font-weight:700;color:#888;margin-bottom:6px;">No Tournaments Yet</div>
+                <div style="font-size:12px;color:#555;">Create karo pehla tournament!</div>
+              </div>
               <div class="table-empty-text">No tournaments found</div>
               <div class="table-empty-sub">Create your first tournament to get started</div>
             </div>
@@ -2191,7 +2451,7 @@ table { border-collapse: collapse; width: 100%; }
       <!-- ========== SECTION: JOIN REQUESTS ========== -->
       <div class="section-page" id="section-join-requests">
         <div class="page-header">
-          <h1 class="page-title"><span class="page-title-icon">📋</span>Join Requests</h1>
+          <h1 class="page-title"><span class="page-title-icon" style="color:var(--primary)">≡</span>Join Requests</h1>
         </div>
 
         <div class="panel">
@@ -2226,7 +2486,10 @@ table { border-collapse: collapse; width: 100%; }
               <tbody id="join-requests-tbody"></tbody>
             </table>
             <div class="table-empty" id="join-requests-empty" style="display:none;">
-              <div class="table-empty-icon">📋</div>
+                <div style="font-size:40px;margin-bottom:12px;">📋</div>
+                <div style="font-size:15px;font-weight:700;color:#888;margin-bottom:6px;">No Join Requests</div>
+                <div style="font-size:12px;color:#555;">Tournament join requests yahan dikhenge</div>
+              </div>
               <div class="table-empty-text">No join requests</div>
               <div class="table-empty-sub">Player requests will appear here</div>
             </div>
@@ -2244,14 +2507,14 @@ table { border-collapse: collapse; width: 100%; }
       <!-- ========== SECTION: WALLET REQUESTS ========== -->
       <div class="section-page" id="section-wallet-requests">
         <div class="page-header">
-          <h1 class="page-title"><span class="page-title-icon">💰</span>Wallet Requests</h1>
+          <h1 class="page-title"><span class="page-title-icon" style="color:#00cc44">₹</span>Wallet Requests</h1>
         </div>
 
         <div class="panel">
           <div class="panel-header" style="flex-direction: column; align-items: stretch;">
             <div class="wallet-tabs" id="wallet-tabs">
-              <button class="wallet-tab active" data-wallet-tab="add-money">💵 Add Money</button>
-              <button class="wallet-tab" data-wallet-tab="withdraw">💸 Withdraw</button>
+              <button class="wallet-tab active" data-wallet-tab="add-money">$ Add Money</button>
+              <button class="wallet-tab" data-wallet-tab="withdraw">₹ Withdraw</button>
             </div>
           </div>
 
@@ -2277,7 +2540,10 @@ table { border-collapse: collapse; width: 100%; }
                 <tbody id="wallet-add-tbody"></tbody>
               </table>
               <div class="table-empty" id="wallet-add-empty" style="display:none;">
-                <div class="table-empty-icon">💵</div>
+                <div style="font-size:40px;margin-bottom:12px;">💰</div>
+                <div style="font-size:15px;font-weight:700;color:#888;margin-bottom:6px;">No Add Money Requests</div>
+                <div style="font-size:12px;color:#555;">Users ke payment requests yahan dikhenge</div>
+              </div>
                 <div class="table-empty-text">No add money requests</div>
                 <div class="table-empty-sub">Payment requests will appear here</div>
               </div>
@@ -2312,7 +2578,10 @@ table { border-collapse: collapse; width: 100%; }
                 <tbody id="wallet-withdraw-tbody"></tbody>
               </table>
               <div class="table-empty" id="wallet-withdraw-empty" style="display:none;">
-                <div class="table-empty-icon">💸</div>
+                <div style="font-size:40px;margin-bottom:12px;">💸</div>
+                <div style="font-size:15px;font-weight:700;color:#888;margin-bottom:6px;">No Withdrawal Requests</div>
+                <div style="font-size:12px;color:#555;">Users ke withdrawal requests yahan dikhenge</div>
+              </div>
                 <div class="table-empty-text">No withdrawal requests</div>
                 <div class="table-empty-sub">Withdrawal requests will appear here</div>
               </div>
@@ -2331,7 +2600,7 @@ table { border-collapse: collapse; width: 100%; }
       <!-- ========== SECTION: TEAM REQUESTS ========== -->
       <div class="section-page" id="section-team-requests">
         <div class="page-header">
-          <h1 class="page-title"><span class="page-title-icon">👫</span>Team Requests</h1>
+          <h1 class="page-title"><span class="page-title-icon" style="color:var(--primary)">⊕</span>Team Requests</h1>
         </div>
 
         <div class="panel">
@@ -2357,7 +2626,10 @@ table { border-collapse: collapse; width: 100%; }
               <tbody id="team-requests-tbody"></tbody>
             </table>
             <div class="table-empty" id="team-requests-empty" style="display:none;">
-              <div class="table-empty-icon">👫</div>
+                <div style="font-size:40px;margin-bottom:12px;">👫</div>
+                <div style="font-size:15px;font-weight:700;color:#888;margin-bottom:6px;">No Team Requests</div>
+                <div style="font-size:12px;color:#555;">Users ke team join requests yahan dikhenge</div>
+              </div>
               <div class="table-empty-text">No team requests</div>
               <div class="table-empty-sub">Team formation requests will appear here</div>
             </div>
@@ -2375,7 +2647,7 @@ table { border-collapse: collapse; width: 100%; }
       <!-- ========== SECTION: MATCH RESULTS ========== -->
       <div class="section-page" id="section-match-results">
         <div class="page-header">
-          <h1 class="page-title"><span class="page-title-icon">🎯</span>Match Results</h1>
+          <h1 class="page-title"><span class="page-title-icon" style="color:var(--danger)">◎</span>Match Results</h1>
         </div>
 
         <div class="panel">
@@ -2405,15 +2677,18 @@ table { border-collapse: collapse; width: 100%; }
               </thead>
               <tbody id="match-results-tbody"></tbody>
             </table>
-            <div class="table-empty" id="match-results-empty">
-              <div class="table-empty-icon">🎯</div>
+            <div class="table-empty" id="match-results-empty" style="display:none;">
+                <div style="font-size:40px;margin-bottom:12px;">🎯</div>
+                <div style="font-size:15px;font-weight:700;color:#888;margin-bottom:6px;">No Completed Matches</div>
+                <div style="font-size:12px;color:#555;">Pehle tournament complete hone ke baad results enter karo</div>
+              </div>
               <div class="table-empty-text">Select a tournament</div>
               <div class="table-empty-sub">Choose a completed tournament to enter results</div>
             </div>
           </div>
           <div class="panel-footer" id="match-results-footer" style="display:none;">
             <div></div>
-            <button class="btn btn-primary" id="submit-results-btn">🏆 Submit Results</button>
+            <button class="btn btn-primary" id="submit-results-btn">★ Submit Results</button>
           </div>
         </div>
       </div>
@@ -2421,7 +2696,7 @@ table { border-collapse: collapse; width: 100%; }
       <!-- ========== SECTION: SUPPORT REQUESTS ========== -->
       <div class="section-page" id="section-support-requests">
         <div class="page-header">
-          <h1 class="page-title"><span class="page-title-icon">🎧</span>Support Requests</h1>
+          <h1 class="page-title"><span class="page-title-icon" style="color:var(--primary)">⊛</span>Support Requests</h1>
         </div>
 
         <div class="panel">
@@ -2452,7 +2727,10 @@ table { border-collapse: collapse; width: 100%; }
               <tbody id="support-requests-tbody"></tbody>
             </table>
             <div class="table-empty" id="support-requests-empty" style="display:none;">
-              <div class="table-empty-icon">🎧</div>
+                <div style="font-size:40px;margin-bottom:12px;">🎧</div>
+                <div style="font-size:15px;font-weight:700;color:#888;margin-bottom:6px;">No Support Requests</div>
+                <div style="font-size:12px;color:#555;">Users ke support tickets yahan dikhenge</div>
+              </div>
               <div class="table-empty-text">No support tickets</div>
               <div class="table-empty-sub">Support requests will appear here</div>
             </div>
@@ -2470,12 +2748,12 @@ table { border-collapse: collapse; width: 100%; }
       <!-- ========== SECTION: NOTIFICATIONS ========== -->
       <div class="section-page" id="section-notifications">
         <div class="page-header">
-          <h1 class="page-title"><span class="page-title-icon">🔔</span>Notifications</h1>
+          <h1 class="page-title"><span class="page-title-icon" style="color:var(--primary)">▲</span>Notifications</h1>
         </div>
 
         <!-- Send Global Notification -->
         <div class="notif-form">
-          <div class="notif-form-title">📢 Send Global Notification</div>
+          <div class="notif-form-title">▶ Send Global Notification</div>
           <div class="form-group">
             <label class="form-label">Title</label>
             <input type="text" class="form-input" id="notif-global-title" placeholder="Notification title...">
@@ -2484,12 +2762,12 @@ table { border-collapse: collapse; width: 100%; }
             <label class="form-label">Message</label>
             <textarea class="form-textarea" id="notif-global-message" placeholder="Type your message here..." rows="3"></textarea>
           </div>
-          <button class="btn btn-primary" id="send-global-notif-btn">📤 Send to All Users</button>
+          <button class="btn btn-primary" id="send-global-notif-btn">↑ Send to All Users</button>
         </div>
 
         <!-- Send Match Notification -->
         <div class="notif-form">
-          <div class="notif-form-title">🏆 Send Match Notification</div>
+          <div class="notif-form-title">★ Send Match Notification</div>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Select Tournament</label>
@@ -2506,13 +2784,13 @@ table { border-collapse: collapse; width: 100%; }
             <label class="form-label">Message</label>
             <textarea class="form-textarea" id="notif-match-message" placeholder="Type your message here..." rows="3"></textarea>
           </div>
-          <button class="btn btn-primary" id="send-match-notif-btn">📤 Send to Match Participants</button>
+          <button class="btn btn-primary" id="send-match-notif-btn">↑ Send to Match Participants</button>
         </div>
 
         <!-- Notification History -->
         <div class="panel">
           <div class="panel-header">
-            <h3 class="panel-title">📜 Notification History</h3>
+            <h3 class="panel-title">≡ Notification History</h3>
           </div>
           <div class="table-wrapper">
             <div id="notifications-loading" class="table-loading">
@@ -2532,7 +2810,10 @@ table { border-collapse: collapse; width: 100%; }
               <tbody id="notifications-tbody"></tbody>
             </table>
             <div class="table-empty" id="notifications-empty" style="display:none;">
-              <div class="table-empty-icon">🔔</div>
+                <div style="font-size:40px;margin-bottom:12px;">🔔</div>
+                <div style="font-size:15px;font-weight:700;color:#888;margin-bottom:6px;">No Notifications Sent</div>
+                <div style="font-size:12px;color:#555;">Global notifications yahan dikhenge</div>
+              </div>
               <div class="table-empty-text">No notifications sent</div>
               <div class="table-empty-sub">Sent notifications will appear here</div>
             </div>
@@ -2550,13 +2831,13 @@ table { border-collapse: collapse; width: 100%; }
       <!-- ========== SECTION: SETTINGS ========== -->
       <div class="section-page" id="section-settings">
         <div class="page-header">
-          <h1 class="page-title"><span class="page-title-icon">⚙️</span>Settings</h1>
+          <h1 class="page-title"><span class="page-title-icon" style="color:var(--primary)">⚙</span>Settings</h1>
         </div>
 
         <div class="panel">
           <!-- Payment Settings -->
           <div class="settings-section">
-            <div class="settings-title">💳 Payment Settings</div>
+            <div class="settings-title">$ Payment Settings</div>
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">UPI ID *</label>
@@ -2567,21 +2848,42 @@ table { border-collapse: collapse; width: 100%; }
                 <input type="number" class="form-input" id="settings-min-withdraw" placeholder="50" min="0">
               </div>
             </div>
-            <div class="form-group">
-              <label class="form-label">UPI QR Code Image</label>
-              <div style="display: flex; align-items: center; gap: 16px;">
-                <input type="file" id="settings-qr-upload" accept="image/*" style="display:none;">
-                <button class="btn btn-outline btn-sm" id="settings-qr-btn">📷 Upload QR Code</button>
-                <div id="settings-qr-preview" style="width:64px; height:64px; border-radius:8px; border:1px solid var(--border-yellow); overflow:hidden; display:none;">
-                  <img src="" alt="QR" style="width:100%; height:100%; object-fit:cover;" id="settings-qr-img">
-                </div>
+
+          </div>
+
+          <!-- Withdraw Settings -->
+          <div class="settings-section">
+            <div class="settings-title">⚙ Withdrawal Limits (₹)</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Min Withdrawal Amount (₹)</label>
+                <input type="number" class="form-input" id="settings-min-withdraw-limit" placeholder="50" min="0">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Max Withdrawal Amount (₹)</label>
+                <input type="number" class="form-input" id="settings-max-withdraw-limit" placeholder="10000" min="0">
+              </div>
+            </div>
+          </div>
+
+          <!-- Deposit Settings -->
+          <div class="settings-section">
+            <div class="settings-title">₹ Deposit Limits (₹)</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Min Deposit Amount (₹)</label>
+                <input type="number" class="form-input" id="settings-min-deposit" placeholder="10" min="0">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Max Deposit Amount (₹)</label>
+                <input type="number" class="form-input" id="settings-max-deposit" placeholder="50000" min="0">
               </div>
             </div>
           </div>
 
           <!-- Game Settings -->
           <div class="settings-section">
-            <div class="settings-title">🎮 Game Settings</div>
+            <div class="settings-title">⚙ Game Settings</div>
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">Kill Reward (coins per kill)</label>
@@ -2596,16 +2898,125 @@ table { border-collapse: collapse; width: 100%; }
 
           <!-- Ticker Settings -->
           <div class="settings-section">
-            <div class="settings-title">📢 Ticker Text</div>
+            <div class="settings-title">▶ Home Screen Scrolling Text</div>
             <div class="form-group">
-              <label class="form-label">Announcement Ticker</label>
-              <textarea class="form-textarea" id="settings-ticker" placeholder="Enter scrolling announcement text..." rows="3"></textarea>
+              <label class="form-label">Scrolling Text (shown on home screen ticker)</label>
+              <textarea class="form-textarea" id="settings-ticker" placeholder="e.g. Welcome to Mini eSports — Join tournaments, win prizes! 🔥" rows="3"></textarea>
             </div>
           </div>
 
           <!-- Save Button -->
           <div class="settings-section" style="border-bottom: none;">
-            <button class="btn btn-primary btn-lg" id="save-settings-btn">💾 Save All Settings</button>
+            <button class="btn btn-primary btn-lg" id="save-settings-btn">✓ Save All Settings</button>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ========== SECTION: VOUCHER MANAGEMENT ========== -->
+      <div class="section-page" id="section-voucher-management">
+        <div class="page-header">
+          <h1 class="page-title"><span class="page-title-icon" style="color:var(--primary)">◈</span>Voucher Management</h1>
+          <div class="page-actions">
+            <button class="btn btn-primary btn-sm" onclick="openCreateVoucher()">+ Create Voucher</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-body">
+            <div id="voucher-loading" class="table-loading"><div class="table-loading-spinner"></div><span class="table-loading-text">Loading...</span></div>
+            <div id="voucher-table" style="display:none;">
+              <table class="data-table">
+                <thead><tr><th>Code</th><th>Coins</th><th>Money</th><th>Expiry</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="voucher-tbody"></tbody>
+              </table>
+            </div>
+            <div id="voucher-empty" class="table-empty" style="display:none;"><div class="table-empty-icon">◈</div><div class="table-empty-text">No vouchers created</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== SECTION: REFERRAL MANAGEMENT ========== -->
+      <div class="section-page" id="section-referral-management">
+        <div class="page-header">
+          <h1 class="page-title"><span class="page-title-icon" style="color:var(--primary)">⊛</span>Referral Management</h1>
+          <div class="page-actions">
+            <button class="btn btn-outline btn-sm" onclick="loadReferrals()">↻ Refresh</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-body">
+            <div id="referral-loading" class="table-loading"><div class="table-loading-spinner"></div><span class="table-loading-text">Loading...</span></div>
+            <div id="referral-table" style="display:none;">
+              <table class="data-table">
+                <thead><tr><th>User UID</th><th>Used Code</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="referral-tbody"></tbody>
+              </table>
+            </div>
+            <div id="referral-empty" class="table-empty" style="display:none;"><div class="table-empty-icon">⊛</div><div class="table-empty-text">No referrals yet</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== SECTION: FINANCIAL REPORT ========== -->
+      <div class="section-page" id="section-financial-report">
+        <div class="page-header">
+          <h1 class="page-title"><span class="page-title-icon" style="color:var(--primary)">₹</span>Financial Report</h1>
+          <div class="page-actions">
+            <button class="btn btn-outline btn-sm" onclick="loadFinancialReport()">↻ Refresh</button>
+            <button class="btn btn-primary btn-sm" onclick="exportFinancialCSV()">↓ Export CSV</button>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+          <div style="background:var(--card-bg);border:1px solid rgba(255,215,0,0.2);border-radius:12px;padding:16px;">
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Total Deposits Received</div>
+            <div style="font-size:24px;font-weight:800;color:var(--primary);">₹<span id="fr-total-dep">0</span></div>
+          </div>
+          <div style="background:var(--card-bg);border:1px solid rgba(255,0,0,0.2);border-radius:12px;padding:16px;">
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Total Withdrawals Paid</div>
+            <div style="font-size:24px;font-weight:800;color:var(--danger);">₹<span id="fr-total-wd">0</span></div>
+          </div>
+          <div style="background:var(--card-bg);border:1px solid rgba(255,215,0,0.2);border-radius:12px;padding:16px;">
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Net Balance</div>
+            <div style="font-size:24px;font-weight:800;color:var(--primary);">₹<span id="fr-net">0</span></div>
+          </div>
+          <div style="background:var(--card-bg);border:1px solid rgba(255,215,0,0.2);border-radius:12px;padding:16px;">
+            <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">Prizes Distributed</div>
+            <div style="font-size:24px;font-weight:800;color:#fff;">₹<span id="fr-prizes">0</span></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><h3 class="panel-title">₹ Transaction History</h3></div>
+          <div class="panel-body">
+            <div id="fr-loading" class="table-loading"><div class="table-loading-spinner"></div><span>Loading...</span></div>
+            <div id="fr-table" style="display:none;">
+              <table class="data-table">
+                <thead><tr><th>Type</th><th>User</th><th>Amount</th><th>Date</th><th>Status</th></tr></thead>
+                <tbody id="fr-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== SECTION: AUDIT LOG ========== -->
+      <div class="section-page" id="section-audit-log">
+        <div class="page-header">
+          <h1 class="page-title"><span class="page-title-icon" style="color:var(--primary)">≡</span>Audit Log</h1>
+          <div class="page-actions">
+            <button class="btn btn-outline btn-sm" onclick="loadAuditLog()">↻ Refresh</button>
+            <button class="btn btn-primary btn-sm" onclick="exportAuditCSV()">↓ Export CSV</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-body">
+            <div id="audit-loading" class="table-loading"><div class="table-loading-spinner"></div><span>Loading...</span></div>
+            <div id="audit-table" style="display:none;">
+              <table class="data-table">
+                <thead><tr><th>Action</th><th>Admin</th><th>Target</th><th>Details</th><th>Date</th></tr></thead>
+                <tbody id="audit-tbody"></tbody>
+              </table>
+            </div>
+            <div id="audit-empty" class="table-empty" style="display:none;"><div class="table-empty-icon">≡</div><div class="table-empty-text">No audit logs yet</div></div>
           </div>
         </div>
       </div>
@@ -2618,7 +3029,7 @@ table { border-collapse: collapse; width: 100%; }
 <div class="modal-overlay" id="modal-edit-user">
   <div class="modal">
     <div class="modal-header">
-      <h3 class="modal-title">✏️ Edit User</h3>
+      <h3 class="modal-title">✎ Edit User</h3>
       <button class="modal-close" data-close-modal="modal-edit-user">✕</button>
     </div>
     <div class="modal-body">
@@ -2657,7 +3068,7 @@ table { border-collapse: collapse; width: 100%; }
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" data-close-modal="modal-edit-user">Cancel</button>
-      <button class="btn btn-primary" id="save-edit-user-btn">💾 Save Changes</button>
+      <button class="btn btn-primary" id="save-edit-user-btn">⊙ Save Changes</button>
     </div>
   </div>
 </div>
@@ -2666,7 +3077,7 @@ table { border-collapse: collapse; width: 100%; }
 <div class="modal-overlay" id="modal-tournament">
   <div class="modal modal-lg">
     <div class="modal-header">
-      <h3 class="modal-title" id="modal-tournament-title">🏆 Create Tournament</h3>
+      <h3 class="modal-title" id="modal-tournament-title">★ Create Tournament</h3>
       <button class="modal-close" data-close-modal="modal-tournament">✕</button>
     </div>
     <div class="modal-body">
@@ -2699,7 +3110,7 @@ table { border-collapse: collapse; width: 100%; }
           <label class="form-label">Entry Type</label>
           <select class="form-select" id="tournament-entry-type">
             <option value="paid">Paid (₹)</option>
-            <option value="coin">Coin (🪙)</option>
+            <option value="coin">Coin (◎)</option>
           </select>
         </div>
         <div class="form-group">
@@ -2750,7 +3161,7 @@ table { border-collapse: collapse; width: 100%; }
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" data-close-modal="modal-tournament">Cancel</button>
-      <button class="btn btn-primary" id="save-tournament-btn">💾 Save Tournament</button>
+      <button class="btn btn-primary" id="save-tournament-btn">⊙ Save Tournament</button>
     </div>
   </div>
 </div>
@@ -2759,7 +3170,7 @@ table { border-collapse: collapse; width: 100%; }
 <div class="modal-overlay" id="modal-support-view">
   <div class="modal">
     <div class="modal-header">
-      <h3 class="modal-title">🎧 Support Ticket</h3>
+      <h3 class="modal-title">⊛ Support Ticket</h3>
       <button class="modal-close" data-close-modal="modal-support-view">✕</button>
     </div>
     <div class="modal-body">
@@ -2789,8 +3200,8 @@ table { border-collapse: collapse; width: 100%; }
     </div>
     <div class="modal-footer">
       <button class="btn btn-outline" data-close-modal="modal-support-view">Close</button>
-      <button class="btn btn-primary btn-sm" id="support-resolve-btn">✅ Mark Resolved</button>
-      <button class="btn btn-primary btn-sm" id="support-reply-btn">📤 Send Reply</button>
+      <button class="btn btn-primary btn-sm" id="support-resolve-btn">✓ Mark Resolved</button>
+      <button class="btn btn-primary btn-sm" id="support-reply-btn">↑ Send Reply</button>
     </div>
   </div>
 </div>
@@ -2799,7 +3210,7 @@ table { border-collapse: collapse; width: 100%; }
 <div class="modal-overlay" id="modal-reject-reason">
   <div class="modal" style="max-width: 440px;">
     <div class="modal-header">
-      <h3 class="modal-title">❌ Rejection Reason</h3>
+      <h3 class="modal-title">✕ Rejection Reason</h3>
       <button class="modal-close" data-close-modal="modal-reject-reason">✕</button>
     </div>
     <div class="modal-body">
@@ -2866,11 +3277,11 @@ function fmtDate(ts) {
 function statusBadge(s) {
   const map = {
     pending:'<span class="badge badge-warning">⏳ Pending</span>',
-    approved:'<span class="badge badge-success">✅ Approved</span>',
-    rejected:'<span class="badge badge-danger">❌ Rejected</span>',
-    resolved:'<span class="badge badge-success">✅ Resolved</span>',
+    approved:'<span class="badge badge-success">✓ Approved</span>',
+    rejected:'<span class="badge badge-danger">✕ Rejected</span>',
+    resolved:'<span class="badge badge-success">✓ Resolved</span>',
     upcoming:'<span class="badge badge-warning">⏰ Upcoming</span>',
-    live:'<span class="badge badge-danger">🔴 Live</span>',
+    live:'<span class="badge badge-danger">● Live</span>',
     completed:'<span class="badge badge-info">✔ Done</span>'
   };
   return map[s] || `<span class="badge">${s}</span>`;
@@ -2888,16 +3299,9 @@ function showConfirm(msg, cb) {
   confirmCallback = cb;
 }
 
-function showSection(id) {
-  document.querySelectorAll('.section-page').forEach(s=>s.classList.remove('active'));
-  const el = document.getElementById('section-'+id);
-  if(el) el.classList.add('active');
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  const nav = document.querySelector(`[data-section="${id}"]`);
-  if(nav) nav.classList.add('active');
-  if(window.innerWidth < 1024) closeSidebar();
-  // Load section data
-  const loaders = {
+// Global section loader map
+function getSectionLoader(id) {
+  const map = {
     'dashboard': loadDashboard,
     'profile-verification': loadProfileVerification,
     'profile-updates': loadProfileUpdates,
@@ -2909,19 +3313,110 @@ function showSection(id) {
     'match-results': loadMatchResults,
     'support-requests': loadSupportRequests,
     'notifications': loadNotifications,
-    'settings': loadSettings
+    'settings': loadSettings,
+    'voucher-management': loadVouchers,
+    'referral-management': loadReferrals,
+    'financial-report': loadFinancialReport,
+    'audit-log': loadAuditLog
   };
-  if(loaders[id]) loaders[id]();
+  return map[id] || null;
+}
+
+const SECTION_NAMES = {
+  'dashboard': 'Dashboard',
+  'profile-verification': 'Profile Verification',
+  'profile-updates': 'Profile Updates',
+  'users': 'Users Management',
+  'tournaments': 'Tournaments',
+  'join-requests': 'Join Requests',
+  'wallet-requests': 'Wallet Requests',
+  'team-requests': 'Team Requests',
+  'match-results': 'Match Results',
+  'support-requests': 'Support Requests',
+  'notifications': 'Notifications',
+  'settings': 'Settings',
+  'voucher-management': 'Voucher Management',
+  'referral-management': 'Referral Management',
+  'financial-report': 'Financial Report',
+  'audit-log': 'Audit Log'
+};
+
+function refreshCurrentSection() {
+  const id = window._currentSection || 'dashboard';
+  const btn = document.getElementById('topbar-refresh');
+  if(btn) {
+    btn.style.transform = 'rotate(360deg)';
+    btn.style.transition = 'transform 0.5s';
+    setTimeout(()=>{ btn.style.transform=''; btn.style.transition=''; }, 500);
+  }
+  const fn = getSectionLoader(id);
+  if(fn) fn();
+}
+
+function showSection(id) {
+  // Show section page
+  document.querySelectorAll('.section-page').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('section-' + id);
+  if(el) el.classList.add('active');
+  // Update nav active
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const nav = document.querySelector('[data-section="' + id + '"]');
+  if(nav) nav.classList.add('active');
+  // Update topbar title
+  const titleEl = document.getElementById('topbar-title');
+  if(titleEl) titleEl.textContent = SECTION_NAMES[id] || id;
+  // Save current
+  window._currentSection = id;
+  // Close sidebar
+  closeSidebar();
+  // Load data
+  const fn = getSectionLoader(id);
+  if(fn) fn();
 }
 
 function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('sidebar-overlay').classList.toggle('active');
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebar-overlay');
+  const isOpen = sb.classList.contains('open');
+  if(isOpen) { sb.classList.remove('open'); ov.classList.remove('active'); }
+  else { sb.classList.add('open'); ov.classList.add('active'); }
+}
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebar-overlay').classList.add('active');
 }
 function closeSidebar() {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('sidebar-overlay').classList.remove('active');
 }
+
+// ── SWIPE GESTURE: anywhere on screen ──
+// Right swipe → open sidebar, Left swipe → close sidebar
+(function() {
+  let startX = 0, startY = 0;
+
+  document.addEventListener('touchstart', function(e) {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, {passive: true});
+
+  document.addEventListener('touchend', function(e) {
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = e.changedTouches[0].clientY - startY;
+    // Ignore vertical swipes
+    if(Math.abs(dy) > Math.abs(dx)) return;
+    // Min 50px horizontal swipe
+    if(Math.abs(dx) < 50) return;
+    const sb = document.getElementById('sidebar');
+    if(dx > 0) {
+      // Any right swipe → open
+      openSidebar();
+    } else {
+      // Any left swipe → close
+      closeSidebar();
+    }
+  }, {passive: true});
+})();
 
 function showLoading(id, show) {
   const el = document.getElementById(id);
@@ -2944,13 +3439,19 @@ function showFooter(id, show) {
 // AUTH
 // ═══════════════════════════════════════════
 auth.onAuthStateChanged(async (user) => {
+  // Always hide splash first
+  const splash = document.getElementById('splash-screen');
+  if(splash) { splash.style.display = 'none'; }
+
   if(user) {
     try {
       const snap = await db.ref('admins/'+user.uid).once('value');
       if(snap.exists()) {
         currentAdmin = user;
-        document.getElementById('sidebar-email').textContent = user.email;
-        document.getElementById('sidebar-avatar').textContent = user.email[0].toUpperCase();
+        const emailEl = document.getElementById('sidebar-email');
+        const avatarEl = document.getElementById('sidebar-avatar');
+        if(emailEl) emailEl.textContent = user.email;
+        if(avatarEl) avatarEl.textContent = user.email[0].toUpperCase();
         document.getElementById('login-screen').classList.remove('active');
         document.getElementById('main-app').classList.add('active');
         loadDashboard();
@@ -2961,16 +3462,18 @@ auth.onAuthStateChanged(async (user) => {
       }
     } catch(e) {
       await auth.signOut();
-      showLoginError('Authorization failed.');
+      showLoginError('Authorization failed: ' + e.message);
     }
   } else {
     currentAdmin = null;
-    document.getElementById('main-app').classList.remove('active');
-    document.getElementById('login-screen').classList.add('active');
+    const mainApp = document.getElementById('main-app');
+    const loginScreen = document.getElementById('login-screen');
+    if(mainApp) mainApp.classList.remove('active');
+    if(loginScreen) loginScreen.classList.add('active');
   }
 });
 
-document.getElementById('login-form') && document.getElementById('login-form').addEventListener('submit', async (e) => {
+document.getElementById('login-form') && document.getElementById('login-form')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = document.getElementById('login-email').value.trim();
   const pass = document.getElementById('login-password').value;
@@ -2989,7 +3492,7 @@ function showLoginError(msg) {
   if(el) { el.textContent = msg; el.style.display = 'block'; }
 }
 
-document.getElementById('logout-btn').addEventListener('click', ()=>{
+document.getElementById('logout-btn')?.addEventListener('click', ()=>{
   showConfirm('Logout from admin panel?', ()=>auth.signOut());
 });
 
@@ -3036,34 +3539,96 @@ function setupBadgeListeners() {
 // ═══════════════════════════════════════════
 async function loadDashboard() {
   try {
-    const [users, tours, pv, pu, jr, wr, tr, sr] = await Promise.all([
+    const today = new Date(); today.setHours(0,0,0,0);
+    const todayTs = today.getTime();
+
+    const [users, tours, pv, pu, jr, addMoney, wdMoney, tr, sr] = await Promise.all([
       db.ref('users').once('value'),
       db.ref('tournaments').once('value'),
       db.ref('profileRequests').once('value'),
       db.ref('profileUpdateRequests').once('value'),
       db.ref('joinRequests').once('value'),
       db.ref('addMoneyRequests').once('value'),
+      db.ref('withdrawRequests').once('value'),
       db.ref('teamRequests').once('value'),
       db.ref('supportRequests').once('value')
     ]);
-    document.getElementById('stat-users').textContent = users.exists()?Object.keys(users.val()).length:0;
-    let activeTours=0, prize=0;
-    if(tours.exists()) {
-      tours.forEach(t=>{ const v=t.val(); if(v.status!=='completed') activeTours++; prize+=(v.prizePool||0); });
+
+    // --- Users ---
+    let totalUsers=0, soloCount=0, duoCount=0, squadCount=0, newToday=0, bannedCount=0;
+    if(users.exists()) {
+      users.forEach(u => {
+        const v = u.val();
+        totalUsers++;
+        if(v.banned) bannedCount++;
+        if(v.createdAt && v.createdAt >= todayTs) newToday++;
+        const hasDuo = v.duoTeam && Object.keys(v.duoTeam).length > 0;
+        const hasSquad = v.squadTeam && Object.keys(v.squadTeam).length > 0;
+        if(hasSquad) squadCount++;
+        else if(hasDuo) duoCount++;
+        else soloCount++;
+      });
     }
-    document.getElementById('stat-tournaments').textContent = activeTours;
-    document.getElementById('stat-prizepool').textContent = '₹'+prize;
-    let pending=0;
-    [pv,pu,jr,wr,tr,sr].forEach(snap=>{ if(snap.exists()) snap.forEach(c=>{ if((c.val().status||'pending')==='pending') pending++; }); });
-    document.getElementById('stat-pending').textContent = pending;
-    // Activity
+    (()=>{const _e=document.getElementById('stat-users');if(_e)_e.textContent=totalUsers;})();
+    (()=>{const _e=document.getElementById('stat-solo');if(_e)_e.textContent=soloCount;})();
+    (()=>{const _e=document.getElementById('stat-duo');if(_e)_e.textContent=duoCount;})();
+    (()=>{const _e=document.getElementById('stat-squad');if(_e)_e.textContent=squadCount;})();
+    (()=>{const _e=document.getElementById('stat-new-today');if(_e)_e.textContent=newToday;})();
+    (()=>{const _e=document.getElementById('stat-banned');if(_e)_e.textContent=bannedCount;})();
+
+    // --- Tournaments ---
+    let upcomingTours=0, completedTours=0, matchesToday=0;
+    if(tours.exists()) {
+      tours.forEach(t => {
+        const v = t.val();
+        if(v.status === 'completed') completedTours++;
+        else upcomingTours++;
+        if(v.matchTime && v.matchTime >= todayTs && v.status === 'completed') matchesToday++;
+      });
+    }
+    (()=>{const _e=document.getElementById('stat-upcoming-tours');if(_e)_e.textContent=upcomingTours;})();
+    (()=>{const _e=document.getElementById('stat-completed-tours');if(_e)_e.textContent=completedTours;})();
+    (()=>{const _e=document.getElementById('stat-matches-today');if(_e)_e.textContent=matchesToday;})();
+
+    // --- Pending Requests ---
+    let withdrawPending=0, depositPending=0, profilePending=0;
+    if(wdMoney.exists()) wdMoney.forEach(c=>{ if((c.val().status||'pending')==='pending') withdrawPending++; });
+    if(addMoney.exists()) addMoney.forEach(c=>{ if((c.val().status||'pending')==='pending') depositPending++; });
+    if(pv.exists()) pv.forEach(c=>{ if((c.val().status||'pending')==='pending') profilePending++; });
+    if(pu.exists()) pu.forEach(c=>{ if((c.val().status||'pending')==='pending') profilePending++; });
+    (()=>{const _e=document.getElementById('stat-withdraw-pending');if(_e)_e.textContent=withdrawPending;})();
+    document.getElementById('stat-deposit-pending').textContent = depositPending;
+    document.getElementById('stat-profile-pending').textContent = profilePending;
+
+    // --- Finance ---
+    let totalDeposited=0, totalWithdrawn=0;
+    if(addMoney.exists()) addMoney.forEach(c=>{ const v=c.val(); if(v.status==='approved') totalDeposited+=(v.amount||0); });
+    if(wdMoney.exists()) wdMoney.forEach(c=>{ const v=c.val(); if(v.status==='approved') totalWithdrawn+=(v.amount||0); });
+    // Total balance = sum of all user wallets
+    let totalBalance=0;
+    if(users.exists()) users.forEach(u=>{ const rm=(u.val().realMoney||{}); totalBalance+=((rm.deposited||0)+(rm.winnings||0)+(rm.bonus||0)); });
+    const netBalance = totalDeposited - totalWithdrawn;
+    document.getElementById('stat-total-deposited').textContent = totalDeposited.toLocaleString('en-IN');
+    document.getElementById('stat-total-withdrawn').textContent = totalWithdrawn.toLocaleString('en-IN');
+    document.getElementById('stat-total-balance').textContent = totalBalance.toLocaleString('en-IN');
+    document.getElementById('stat-net-balance').textContent = netBalance.toLocaleString('en-IN');
+
+    // --- Online (active in last 5 mins) ---
+    let online=0;
+    const fiveMin = Date.now() - 300000;
+    if(users.exists()) users.forEach(u=>{ if((u.val().lastSeen||0) > fiveMin) online++; });
+    document.getElementById('stat-online').textContent = online;
+
+    // --- Activity ---
     const actList = document.getElementById('activity-list');
     const actEmpty = document.getElementById('activity-empty');
     const actLoading = document.getElementById('activity-loading');
     actLoading.style.display = 'none';
     const items = [];
-    if(jr.exists()) jr.forEach(c=>{ const v=c.val(); items.push({time:v.createdAt||0, text:'👤 '+sanitize(v.ign||v.uid)+' requested to join '+sanitize(v.tournamentName||'')}); });
-    if(wr.exists()) wr.forEach(c=>{ const v=c.val(); items.push({time:v.createdAt||0, text:'💰 Add money request: ₹'+v.amount}); });
+    if(jr.exists()) jr.forEach(c=>{ const v=c.val(); items.push({time:v.createdAt||0, text:'○ '+sanitize(v.ign||v.uid)+' requested to join '+sanitize(v.tournamentName||'')}); });
+    if(addMoney.exists()) addMoney.forEach(c=>{ const v=c.val(); items.push({time:v.createdAt||0, text:'₹ Add money request: ₹'+v.amount}); });
+    if(wdMoney.exists()) wdMoney.forEach(c=>{ const v=c.val(); items.push({time:v.createdAt||0, text:'₹ Withdraw request: ₹'+v.amount}); });
+    if(pv.exists()) pv.forEach(c=>{ const v=c.val(); items.push({time:v.createdAt||0, text:'✓ Profile verification: '+sanitize(v.ign||v.uid)}); });
     items.sort((a,b)=>b.time-a.time);
     if(items.length) {
       actList.innerHTML = items.slice(0,10).map(i=>`<div class="activity-item"><span>${i.text}</span><span style="color:var(--text-muted);font-size:11px">${fmtDate(i.time)}</span></div>`).join('');
@@ -3071,10 +3636,10 @@ async function loadDashboard() {
     } else {
       actEmpty.style.display='flex';
     }
-  } catch(e) { toast('Dashboard load failed',true); }
+  } catch(e) { toast('Dashboard load failed: '+e.message, true); }
 }
 
-document.getElementById('refresh-dashboard').addEventListener('click', loadDashboard);
+document.getElementById('refresh-dashboard')?.addEventListener('click', loadDashboard);
 
 // ═══════════════════════════════════════════
 // PROFILE VERIFICATION
@@ -3095,38 +3660,46 @@ async function loadProfileVerification() {
 }
 
 function renderPV(data) {
-  const q = (document.getElementById('search-profile-verification').value||'').toLowerCase();
+  const _pv=document.getElementById('search-profile-verification');
+  const q = (_pv?_pv.value:'').toLowerCase();
   const filtered = q ? data.filter(r=>(r.displayName||'').toLowerCase().includes(q)||(r.email||'').toLowerCase().includes(q)) : data;
   const tbody = document.getElementById('profile-verification-tbody');
+  showLoading('profile-verification-loading',false);
   showLoading('profile-verification-loading',false);
   if(!filtered.length) { showEmpty('profile-verification-empty',true); showTable('profile-verification-table',false); showFooter('profile-verification-footer',false); return; }
   showEmpty('profile-verification-empty',false); showTable('profile-verification-table',true); showFooter('profile-verification-footer',true);
   document.getElementById('profile-verification-info').textContent = 'Showing '+filtered.length+' results';
   tbody.innerHTML = filtered.map(r=>`
     <tr>
-      <td><strong>${sanitize(r.displayName||'-')}</strong><br><small style="color:var(--text-muted)">${sanitize(r.email||'-')}</small></td>
-      <td>${sanitize(r.ign||'-')}</td>
-      <td>${sanitize(r.ffuid||'-')}</td>
-      <td>${fmtDate(r.createdAt)}</td>
+      <td><strong>${sanitize(r.displayName||'-')}</strong><br><small style="color:var(--text-muted)">${sanitize(r.email||r.uid||'-')}</small></td>
+      <td style="color:var(--yellow);font-weight:600">${sanitize(r.ign||'-')}</td>
+      <td style="font-family:monospace">${sanitize(r.ffuid||'-')}</td>
+      <td style="font-size:12px">${fmtDate(r.createdAt)}</td>
       <td>${statusBadge(r.status||'pending')}</td>
       <td>
-        ${r.status==='pending'?`<button class="btn btn-primary btn-xs" onclick="approveProfile('${r.id}','${r.uid}','${sanitize(r.ign)}','${sanitize(r.ffuid)}')">✅ Approve</button>
-        <button class="btn btn-danger btn-xs" onclick="rejectRequest('${r.id}','${r.uid}','profileRequests','profileVerification')">❌ Reject</button>`:''}
+        ${r.status==='pending'?`<button class="btn btn-primary btn-xs" onclick="approveProfile('${r.id}','${r.uid}','${sanitize(r.ign||'')}','${sanitize(r.ffuid||'')}')">✓ Approve</button>
+        <button class="btn btn-danger btn-xs" onclick="rejectRequest('${r.id}','${r.uid}','profileRequests','profileVerification')">✕ Reject</button>`:'<span style="color:var(--text-muted);font-size:12px">Done</span>'}
       </td>
     </tr>`).join('');
 }
 
 async function approveProfile(id, uid, ign, ffuid) {
   try {
-    await db.ref('users/'+uid).update({approved:true, ign, ffuid, profileUpdatePending:false});
+    await db.ref('users/'+uid).update({
+      approved: true,
+      ign: ign,
+      ffuid: ffuid,
+      profileUpdatePending: false
+    });
     await db.ref('profileRequests/'+id).update({status:'approved'});
-    await sendNotifToUser(uid,'Profile Approved! ✅','Your Free Fire profile has been verified. You can now join tournaments!');
+    await sendNotifToUser(uid,'✓ Profile Approved!','Your Free Fire profile has been verified. You can now join tournaments! Good luck! ⊡');
     toast('Profile approved!');
     loadProfileVerification();
+    loadDashboard();
   } catch(e) { toast('Failed: '+e.message,true); }
 }
 
-document.getElementById('search-profile-verification').addEventListener('input', ()=>renderPV(pvData));
+document.getElementById('search-profile-verification')?.addEventListener('input', ()=>renderPV(pvData));
 
 // ═══════════════════════════════════════════
 // PROFILE UPDATE REQUESTS
@@ -3147,10 +3720,12 @@ async function loadProfileUpdates() {
 }
 
 function renderPU(data) {
-  const q = (document.getElementById('search-profile-updates').value||'').toLowerCase();
+  const _pu=document.getElementById('search-profile-updates');
+  const q = (_pu?_pu.value:'').toLowerCase();
   const filtered = q ? data.filter(r=>(r.displayName||'').toLowerCase().includes(q)) : data;
   const tbody = document.getElementById('profile-updates-tbody');
-  if(!filtered.length) { showEmpty('profile-updates-empty',true); showTable('profile-updates-table',false); return; }
+  showLoading('profile-updates-loading',false);
+  if(!filtered.length) { showEmpty('profile-updates-empty',true); showTable('profile-updates-table',false); showFooter('profile-updates-footer',false); return; }
   showEmpty('profile-updates-empty',false); showTable('profile-updates-table',true); showFooter('profile-updates-footer',true);
   tbody.innerHTML = filtered.map(r=>`
     <tr>
@@ -3161,8 +3736,8 @@ function renderPU(data) {
       <td>${fmtDate(r.createdAt)}</td>
       <td>${statusBadge(r.status||'pending')}</td>
       <td>
-        ${r.status==='pending'?`<button class="btn btn-primary btn-xs" onclick="approveProfileUpdate('${r.id}','${r.uid}','${sanitize(r.newIGN)}','${sanitize(r.newFFUID)}')">✅ Approve</button>
-        <button class="btn btn-danger btn-xs" onclick="rejectRequest('${r.id}','${r.uid}','profileUpdateRequests','profileUpdate')">❌ Reject</button>`:''}
+        ${r.status==='pending'?`<button class="btn btn-primary btn-xs" onclick="approveProfileUpdate('${r.id}','${r.uid}','${sanitize(r.newIGN)}','${sanitize(r.newFFUID)}')">✓ Approve</button>
+        <button class="btn btn-danger btn-xs" onclick="rejectRequest('${r.id}','${r.uid}','profileUpdateRequests','profileUpdate')">✕ Reject</button>`:''}
       </td>
     </tr>`).join('');
 }
@@ -3171,13 +3746,13 @@ async function approveProfileUpdate(id, uid, newIGN, newFFUID) {
   try {
     await db.ref('users/'+uid).update({ign:newIGN, ffuid:newFFUID, profileUpdatePending:false});
     await db.ref('profileUpdateRequests/'+id).update({status:'approved'});
-    await sendNotifToUser(uid,'Profile Updated! ✅','Your profile update has been approved.');
+    await sendNotifToUser(uid,'Profile Updated! ✓','Your profile update has been approved.');
     toast('Profile update approved!');
     loadProfileUpdates();
   } catch(e) { toast('Failed: '+e.message,true); }
 }
 
-document.getElementById('search-profile-updates').addEventListener('input', ()=>renderPU(puData));
+document.getElementById('search-profile-updates')?.addEventListener('input', ()=>renderPU(puData));
 
 // ═══════════════════════════════════════════
 // USERS
@@ -3196,7 +3771,8 @@ async function loadUsers() {
 }
 
 function renderUsers(data) {
-  const q = (document.getElementById('search-users').value||'').toLowerCase();
+  const _su=document.getElementById('search-users');
+  const q = (_su?_su.value:'').toLowerCase();
   const filtered = q ? data.filter(u=>(u.displayName||'').toLowerCase().includes(q)||(u.email||'').toLowerCase().includes(q)||(u.ign||'').toLowerCase().includes(q)) : data;
   const tbody = document.getElementById('users-tbody');
   if(!filtered.length) { showEmpty('users-empty',true); showTable('users-table',false); showFooter('users-footer',false); return; }
@@ -3206,17 +3782,17 @@ function renderUsers(data) {
     <tr>
       <td><strong>${sanitize(u.displayName||'-')}</strong><br><small style="color:var(--text-muted)">${sanitize(u.email||'-')}</small></td>
       <td>${sanitize(u.ign||'-')}<br><small style="color:var(--text-muted)">${sanitize(u.ffuid||'-')}</small></td>
-      <td style="color:var(--yellow)">🪙 ${u.coins||0}</td>
+      <td style="color:var(--yellow)">◎ ${u.coins||0}</td>
       <td>₹${((u.realMoney?.deposited||0)+(u.realMoney?.winnings||0)+(u.realMoney?.bonus||0)).toFixed(0)}</td>
-      <td>${u.approved?'<span class="badge badge-success">✅ Active</span>':'<span class="badge badge-warning">⏳ Pending</span>'}</td>
+      <td>${u.approved?'<span class="badge badge-success">✓ Active</span>':'<span class="badge badge-warning">⏳ Pending</span>'}</td>
       <td>
-        <button class="btn btn-outline btn-xs" onclick="openEditUser('${u.uid}')">✏️ Edit</button>
-        <button class="btn btn-danger btn-xs" onclick="deleteUser('${u.uid}','${sanitize(u.displayName||u.email)}')">🗑</button>
+        <button class="btn btn-outline btn-xs" onclick="openEditUser('${u.uid}')">✎ Edit</button>
+        <button class="btn btn-danger btn-xs" onclick="deleteUser('${u.uid}','${sanitize(u.displayName||u.email)}')">✕</button>
       </td>
     </tr>`).join('');
 }
 
-document.getElementById('search-users').addEventListener('input', ()=>renderUsers(usersData));
+document.getElementById('search-users')?.addEventListener('input', ()=>renderUsers(usersData));
 
 async function openEditUser(uid) {
   const snap = await db.ref('users/'+uid).once('value');
@@ -3232,7 +3808,7 @@ async function openEditUser(uid) {
   document.getElementById('modal-edit-user').classList.add('active');
 }
 
-document.getElementById('save-edit-user-btn').addEventListener('click', async ()=>{
+document.getElementById('save-edit-user-btn')?.addEventListener('click', async ()=>{
   const uid = document.getElementById('edit-user-uid').value;
   try {
     await db.ref('users/'+uid).update({
@@ -3285,7 +3861,8 @@ function computeStatus(mt) {
 }
 
 function renderTournaments(data) {
-  const q = (document.getElementById('search-tournaments').value||'').toLowerCase();
+  const _st=document.getElementById('search-tournaments');
+  const q = (_st?_st.value:'').toLowerCase();
   const filtered = q ? data.filter(t=>(t.name||'').toLowerCase().includes(q)) : data;
   const tbody = document.getElementById('tournaments-tbody');
   if(!filtered.length) { showEmpty('tournaments-empty',true); showTable('tournaments-table',false); showFooter('tournaments-footer',false); return; }
@@ -3296,24 +3873,24 @@ function renderTournaments(data) {
       <td><strong>${sanitize(t.name||'-')}</strong></td>
       <td>${sanitize(t.gameMode||'-')}</td>
       <td>${sanitize(t.map||'-')}</td>
-      <td>${t.entryType==='paid'?'₹'+t.entryFee:'🪙'+t.entryFee}</td>
+      <td>${t.entryType==='paid'?'₹'+t.entryFee:'◎'+t.entryFee}</td>
       <td>₹${t.prizePool||0}</td>
       <td>${t.filledSlots||0}/${t.maxSlots||12}</td>
       <td style="font-size:12px">${fmtDate(t.matchTime)}</td>
       <td>${statusBadge(computeStatus(t.matchTime||0))}</td>
-      <td>${t.roomLocked?'🔒 Locked':'🔓 Open'}</td>
+      <td>${t.roomLocked?'⊠ Locked':'▲ Open'}</td>
       <td>
         <button class="btn btn-outline btn-xs" onclick="openEditTournament('${t.id}')">✏️</button>
-        <button class="btn btn-danger btn-xs" onclick="deleteTournament('${t.id}','${sanitize(t.name)}')">🗑</button>
+        <button class="btn btn-danger btn-xs" onclick="deleteTournament('${t.id}','${sanitize(t.name)}')">✕</button>
       </td>
     </tr>`).join('');
 }
 
-document.getElementById('search-tournaments').addEventListener('input', ()=>renderTournaments(toursData));
-document.getElementById('create-tournament-btn').addEventListener('click', ()=>openCreateTournament());
+document.getElementById('search-tournaments')?.addEventListener('input', ()=>renderTournaments(toursData));
+document.getElementById('create-tournament-btn')?.addEventListener('click', ()=>openCreateTournament());
 
 function openCreateTournament() {
-  document.getElementById('modal-tournament-title').textContent = '🏆 Create Tournament';
+  document.getElementById('modal-tournament-title').textContent = '★ Create Tournament';
   document.getElementById('tournament-edit-id').value = '';
   document.getElementById('tournament-name').value = '';
   document.getElementById('tournament-mode').value = 'Solo';
@@ -3334,7 +3911,7 @@ async function openEditTournament(id) {
   const snap = await db.ref('tournaments/'+id).once('value');
   if(!snap.exists()) return;
   const t = snap.val();
-  document.getElementById('modal-tournament-title').textContent = '✏️ Edit Tournament';
+  document.getElementById('modal-tournament-title').textContent = '✎ Edit Tournament';
   document.getElementById('tournament-edit-id').value = id;
   document.getElementById('tournament-name').value = t.name||'';
   document.getElementById('tournament-mode').value = t.gameMode||'Solo';
@@ -3354,7 +3931,7 @@ async function openEditTournament(id) {
   document.getElementById('modal-tournament').classList.add('active');
 }
 
-document.getElementById('save-tournament-btn').addEventListener('click', async ()=>{
+document.getElementById('save-tournament-btn')?.addEventListener('click', async ()=>{
   const id = document.getElementById('tournament-edit-id').value;
   const name = document.getElementById('tournament-name').value.trim();
   const dtVal = document.getElementById('tournament-datetime').value;
@@ -3418,12 +3995,12 @@ function renderJR() {
       <td><strong>${sanitize(r.ign||r.uid||'-')}</strong></td>
       <td>${sanitize(r.ffuid||'-')}</td>
       <td>${sanitize(r.tournamentName||'-')}</td>
-      <td>${r.entryType==='paid'?'₹'+r.entryFee:'🪙'+r.entryFee}</td>
+      <td>${r.entryType==='paid'?'₹'+r.entryFee:'◎'+r.entryFee}</td>
       <td>${fmtDate(r.createdAt)}</td>
       <td>${statusBadge(r.status||'pending')}</td>
       <td>
-        ${r.status==='pending'?`<button class="btn btn-primary btn-xs" onclick="approveJoin('${r.id}')">✅</button>
-        <button class="btn btn-danger btn-xs" onclick="rejectRequest('${r.id}','${r.uid}','joinRequests','join')">❌</button>`:''}
+        ${r.status==='pending'?`<button class="btn btn-primary btn-xs" onclick="approveJoin('${r.id}')">✓</button>
+        <button class="btn btn-danger btn-xs" onclick="rejectRequest('${r.id}','${r.uid}','joinRequests','join')">✕</button>`:''}
       </td>
     </tr>`).join('');
 }
@@ -3450,20 +4027,13 @@ async function approveJoin(id) {
     const tSnap = await db.ref('tournaments/'+tid+'/filledSlots').once('value');
     await db.ref('tournaments/'+tid+'/filledSlots').set((tSnap.val()||0)+1);
     await db.ref('joinRequests/'+id).update({status:'approved'});
-    await sendNotifToUser(uid,'Join Request Approved! ✅','Your request to join '+sanitize(r.tournamentName||'the tournament')+' has been approved. Good luck!');
+    await sendNotifToUser(uid,'Join Request Approved! ✓','Your request to join '+sanitize(r.tournamentName||'the tournament')+' has been approved. Good luck!');
     toast('Join approved!'); loadJoinRequests();
   } catch(e) { toast('Failed: '+e.message,true); }
 }
 
 // Filter tabs for join requests
-document.querySelectorAll('[data-jr-filter]').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    jrFilter = btn.dataset.jrFilter;
-    document.querySelectorAll('[data-jr-filter]').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    renderJR();
-  });
-});
+// moved to DOMContentLoaded
 
 // ═══════════════════════════════════════════
 // WALLET REQUESTS
@@ -3506,8 +4076,8 @@ function renderWalletAdd() {
       <td style="font-size:12px">${fmtDate(r.createdAt)}</td>
       <td>${statusBadge(r.status||'pending')}</td>
       <td>
-        ${r.status==='pending'?`<button class="btn btn-primary btn-xs" onclick="approveAddMoney('${r.id}','${r.uid}',${r.amount||0})">✅</button>
-        <button class="btn btn-danger btn-xs" onclick="rejectWallet('${r.id}','addMoneyRequests')">❌</button>`:''}
+        ${r.status==='pending'?`<button class="btn btn-primary btn-xs" onclick="approveAddMoney('${r.id}','${r.uid}',${r.amount||0})">✓</button>
+        <button class="btn btn-danger btn-xs" onclick="rejectWallet('${r.id}','addMoneyRequests')">✕</button>`:''}
       </td>
     </tr>`).join('');
 }
@@ -3525,8 +4095,8 @@ function renderWalletWithdraw() {
       <td style="font-size:12px">${fmtDate(r.createdAt)}</td>
       <td>${statusBadge(r.status||'pending')}</td>
       <td>
-        ${r.status==='pending'?`<button class="btn btn-primary btn-xs" onclick="approveWithdraw('${r.id}','${r.uid}',${r.amount||0})">✅</button>
-        <button class="btn btn-danger btn-xs" onclick="rejectWallet('${r.id}','withdrawRequests')">❌</button>`:''}
+        ${r.status==='pending'?`<button class="btn btn-primary btn-xs" onclick="approveWithdraw('${r.id}','${r.uid}',${r.amount||0})">✓</button>
+        <button class="btn btn-danger btn-xs" onclick="rejectWallet('${r.id}','withdrawRequests')">✕</button>`:''}
       </td>
     </tr>`).join('');
 }
@@ -3536,7 +4106,7 @@ async function approveAddMoney(id, uid, amount) {
     const snap = await db.ref('users/'+uid+'/realMoney/deposited').once('value');
     await db.ref('users/'+uid+'/realMoney/deposited').set((snap.val()||0)+amount);
     await db.ref('addMoneyRequests/'+id).update({status:'approved'});
-    await sendNotifToUser(uid,'Money Added! 💰','₹'+amount+' has been added to your wallet.');
+    await sendNotifToUser(uid,'Money Added! ₹','₹'+amount+' has been added to your wallet.');
     toast('Add money approved!'); loadWalletRequests();
   } catch(e) { toast('Failed',true); }
 }
@@ -3548,7 +4118,7 @@ async function approveWithdraw(id, uid, amount) {
     if(win < amount) { toast('Insufficient winnings balance',true); return; }
     await db.ref('users/'+uid+'/realMoney/winnings').set(win-amount);
     await db.ref('withdrawRequests/'+id).update({status:'approved'});
-    await sendNotifToUser(uid,'Withdrawal Approved! 💸','₹'+amount+' withdrawal has been processed.');
+    await sendNotifToUser(uid,'Withdrawal Approved! ₹','₹'+amount+' withdrawal has been processed.');
     toast('Withdrawal approved!'); loadWalletRequests();
   } catch(e) { toast('Failed',true); }
 }
@@ -3561,15 +4131,7 @@ async function rejectWallet(id, path) {
 }
 
 // Wallet tabs
-document.querySelectorAll('[data-wallet-tab]').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('[data-wallet-tab]').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    const tab = btn.dataset.walletTab;
-    document.getElementById('wallet-tab-add-money').style.display = tab==='add-money'?'block':'none';
-    document.getElementById('wallet-tab-withdraw').style.display = tab==='withdraw'?'block':'none';
-  });
-});
+// moved to DOMContentLoaded
 
 // ═══════════════════════════════════════════
 // TEAM REQUESTS
@@ -3594,8 +4156,8 @@ async function loadTeamRequests() {
         <td style="font-size:12px">${fmtDate(r.createdAt)}</td>
         <td>${statusBadge(r.status||'pending')}</td>
         <td>
-          ${r.status==='pending'?`<button class="btn btn-primary btn-xs" onclick="approveTeam('${r.id}')">✅</button>
-          <button class="btn btn-danger btn-xs" onclick="rejectRequest('${r.id}','${r.uid}','teamRequests','team')">❌</button>`:''}
+          ${r.status==='pending'?`<button class="btn btn-primary btn-xs" onclick="approveTeam('${r.id}')">✓</button>
+          <button class="btn btn-danger btn-xs" onclick="rejectRequest('${r.id}','${r.uid}','teamRequests','team')">✕</button>`:''}
         </td>
       </tr>`).join('');
   } catch(e) { toast('Failed',true); }
@@ -3618,7 +4180,7 @@ async function approveTeam(id) {
     const newKey = db.ref().push().key;
     await db.ref('users/'+uid+'/'+teamKey+'/'+newKey).set({name:tmName, ffuid:tmUID});
     await db.ref('teamRequests/'+id).update({status:'approved'});
-    await sendNotifToUser(uid,'Team Request Approved! 👫','Your '+mode+' teammate has been added.');
+    await sendNotifToUser(uid,'Team Request Approved! ⊕','Your '+mode+' teammate has been added.');
     toast('Team approved!'); loadTeamRequests();
   } catch(e) { toast('Failed: '+e.message,true); }
 }
@@ -3644,7 +4206,7 @@ async function loadMatchResults() {
   } catch(e) { toast('Failed',true); }
 }
 
-document.getElementById('match-result-tournament-select').addEventListener('change', async function() {
+document.getElementById('match-result-tournament-select')?.addEventListener('change', async function() {
   const tid = this.value;
   if(!tid) { showEmpty('match-results-empty',true); showTable('match-results-table',false); return; }
   showLoading('match-results-loading',true);
@@ -3689,7 +4251,7 @@ function calcReward(uid) {
   if(el) el.textContent = '₹'+reward;
 }
 
-document.getElementById('submit-results-btn').addEventListener('click', async ()=>{
+document.getElementById('submit-results-btn')?.addEventListener('click', async ()=>{
   const tid = document.getElementById('match-result-tournament-select').value;
   if(!tid) { toast('Select a tournament first',true); return; }
   const playersRaw = document.getElementById('match-results-table').dataset.players;
@@ -3710,7 +4272,7 @@ document.getElementById('submit-results-btn').addEventListener('click', async ()
         'stats/earnings': (u.stats?.earnings||0)+reward,
         'realMoney/winnings': (u.realMoney?.winnings||0)+reward
       });
-      if(reward>0) await sendNotifToUser(p.uid,'Match Result 🏆','You earned ₹'+reward+' in '+kills+' kills'+(isWinner?' — Winner! 🥇':'')+'.');
+      if(reward>0) await sendNotifToUser(p.uid,'Match Result ★','You earned ₹'+reward+' in '+kills+' kills'+(isWinner?' — Winner! ①':'')+'.');
     }
     await db.ref('tournaments/'+tid).update({resultSubmitted:true});
     toast('Results submitted!'); loadMatchResults();
@@ -3740,8 +4302,8 @@ async function loadSupportRequests() {
         <td style="font-size:12px">${fmtDate(r.createdAt)}</td>
         <td>${statusBadge(r.status||'pending')}</td>
         <td>
-          <button class="btn btn-outline btn-xs" onclick="openSupportView('${r.id}')">👁 View</button>
-          ${r.status!=='resolved'?`<button class="btn btn-primary btn-xs" onclick="resolveSupport('${r.id}','${r.uid}')">✅</button>`:''}
+          <button class="btn btn-outline btn-xs" onclick="openSupportView('${r.id}')">⊙ View</button>
+          ${r.status!=='resolved'?`<button class="btn btn-primary btn-xs" onclick="resolveSupport('${r.id}','${r.uid}')">✓</button>`:''}
         </td>
       </tr>`).join('');
   } catch(e) { toast('Failed',true); }
@@ -3764,23 +4326,23 @@ function openSupportView(id) {
 async function resolveSupport(id, uid) {
   try {
     await db.ref('supportRequests/'+id).update({status:'resolved'});
-    if(uid) await sendNotifToUser(uid,'Support Request Resolved ✅','Your support request has been resolved. Thank you!');
+    if(uid) await sendNotifToUser(uid,'Support Request Resolved ✓','Your support request has been resolved. Thank you!');
     toast('Marked as resolved'); loadSupportRequests();
   } catch(e) { toast('Failed',true); }
 }
 
-document.getElementById('support-resolve-btn').addEventListener('click', async ()=>{
+document.getElementById('support-resolve-btn')?.addEventListener('click', async ()=>{
   const id = document.getElementById('support-view-id').value;
   const uid = document.getElementById('support-view-uid').value;
   await resolveSupport(id, uid);
   closeModal('modal-support-view');
 });
 
-document.getElementById('support-reply-btn').addEventListener('click', async ()=>{
+document.getElementById('support-reply-btn')?.addEventListener('click', async ()=>{
   const uid = document.getElementById('support-view-uid').value;
   const msg = document.getElementById('support-reply-message').value.trim();
   if(!msg) { toast('Enter reply message',true); return; }
-  await sendNotifToUser(uid,'Admin Reply 📩', msg);
+  await sendNotifToUser(uid,'Admin Reply ✉', msg);
   toast('Reply sent!');
   document.getElementById('support-reply-message').value = '';
 });
@@ -3817,7 +4379,7 @@ async function loadNotifications() {
   showLoading('notifications-loading',false);
 }
 
-document.getElementById('send-global-notif-btn').addEventListener('click', async ()=>{
+document.getElementById('send-global-notif-btn')?.addEventListener('click', async ()=>{
   const title = document.getElementById('notif-global-title').value.trim();
   const body = document.getElementById('notif-global-message').value.trim();
   if(!title||!body) { toast('Title and message required',true); return; }
@@ -3837,7 +4399,7 @@ document.getElementById('send-global-notif-btn').addEventListener('click', async
   } catch(e) { toast('Failed: '+e.message,true); }
 });
 
-document.getElementById('send-match-notif-btn').addEventListener('click', async ()=>{
+document.getElementById('send-match-notif-btn')?.addEventListener('click', async ()=>{
   const tid = document.getElementById('notif-match-tournament')?.value;
   const title = document.getElementById('notif-match-title').value.trim();
   const body = document.getElementById('notif-match-message').value.trim();
@@ -3869,26 +4431,36 @@ async function loadSettings() {
       const p = pSnap.val();
       document.getElementById('settings-upi-id').value = p.upiId||'';
       document.getElementById('settings-min-withdraw').value = p.minWithdraw||50;
-      if(p.upiQrBase64) {
-        document.getElementById('settings-qr-img').src = p.upiQrBase64;
-        document.getElementById('settings-qr-preview').style.display='block';
-      }
+      document.getElementById('settings-min-withdraw-limit').value = p.minWithdraw||50;
+      document.getElementById('settings-max-withdraw-limit').value = p.maxWithdraw||10000;
+      document.getElementById('settings-min-deposit').value = p.minDeposit||10;
+      document.getElementById('settings-max-deposit').value = p.maxDeposit||50000;
     }
     if(cSnap.exists()) {
       const c = cSnap.val();
       document.getElementById('settings-kill-reward').value = c.killReward||5;
       document.getElementById('settings-daily-coins').value = c.dailyCoins||10;
     }
-    if(tSnap.exists()) document.getElementById('settings-ticker').value = tSnap.val()||'';
+    if(tSnap.exists()) document.getElementById('settings-ticker').value = tSnap.val().text||tSnap.val()||'';
   } catch(e) { toast('Failed to load settings',true); }
 }
 
-document.getElementById('save-settings-btn').addEventListener('click', async ()=>{
+document.getElementById('save-settings-btn')?.addEventListener('click', async ()=>{
   const upiId = document.getElementById('settings-upi-id').value.trim();
   if(!upiId) { toast('UPI ID required',true); return; }
   try {
-    const payData = { upiId, minWithdraw:parseInt(document.getElementById('settings-min-withdraw').value)||50, updatedAt:Date.now() };
-    if(pendingQrBase64) payData.upiQrBase64 = pendingQrBase64;
+    const minW = parseInt(document.getElementById('settings-min-withdraw-limit').value)||50;
+    const maxW = parseInt(document.getElementById('settings-max-withdraw-limit').value)||10000;
+    const minD = parseInt(document.getElementById('settings-min-deposit').value)||10;
+    const maxD = parseInt(document.getElementById('settings-max-deposit').value)||50000;
+    const payData = {
+      upiId,
+      minWithdraw: minW,
+      maxWithdraw: maxW,
+      minDeposit: minD,
+      maxDeposit: maxD,
+      updatedAt: Date.now()
+    };
     await db.ref('appSettings/payment').update(payData);
     await db.ref('appConfig').update({
       killReward: parseInt(document.getElementById('settings-kill-reward').value)||5,
@@ -3896,14 +4468,14 @@ document.getElementById('save-settings-btn').addEventListener('click', async ()=
       updatedAt: Date.now()
     });
     const ticker = document.getElementById('settings-ticker').value.trim();
-    if(ticker) await db.ref('appSettings/ticker').set(ticker);
+    if(ticker) await db.ref('appSettings/ticker').set({ text: ticker, updatedAt: Date.now() });
     pendingQrBase64 = null;
     toast('Settings saved!');
   } catch(e) { toast('Failed: '+e.message,true); }
 });
 
-document.getElementById('settings-qr-btn').addEventListener('click', ()=>document.getElementById('settings-qr-upload').click());
-document.getElementById('settings-qr-upload').addEventListener('change', function() {
+// QR upload removed
+document.getElementById('settings-qr-upload')?.addEventListener('change', function() {
   const file = this.files[0]; if(!file) return;
   const reader = new FileReader();
   reader.onload = e=>{
@@ -3927,7 +4499,7 @@ function rejectRequest(id, uid, path, type) {
   document.getElementById('reject-reason-id').dataset.path = path;
 }
 
-document.getElementById('confirm-reject-btn') && document.getElementById('confirm-reject-btn').addEventListener('click', async ()=>{
+document.getElementById('confirm-reject-btn') && document.getElementById('confirm-reject-btn')?.addEventListener('click', async ()=>{
   const id = document.getElementById('reject-reason-id').value;
   const uid = document.getElementById('reject-reason-uid').value;
   const type = document.getElementById('reject-reason-type').value;
@@ -3942,7 +4514,7 @@ document.getElementById('confirm-reject-btn') && document.getElementById('confir
         join:'Your join request was rejected. '+reason,
         team:'Your team request was rejected. '+reason
       };
-      await sendNotifToUser(uid,'Request Rejected ❌', msgs[type]||'Your request was rejected.');
+      await sendNotifToUser(uid,'Request Rejected ✕', msgs[type]||'Your request was rejected.');
       // Reset pending flags
       if(type==='profileVerification') await db.ref('users/'+uid).update({profileUpdatePending:false});
       if(type==='profileUpdate') await db.ref('users/'+uid).update({profileUpdatePending:false});
@@ -3966,31 +4538,307 @@ async function sendNotifToUser(uid, title, body) {
   } catch(e) { console.error('Notif error',e); }
 }
 
+
+// ═══════════════════════════════════════════
+// BULK APPROVE PROFILES
+// ═══════════════════════════════════════════
+async function bulkApproveProfiles() {
+  showConfirm('Approve ALL pending profiles?', async () => {
+    try {
+      const snap = await db.ref('profileRequests').orderByChild('status').equalTo('pending').once('value');
+      if(!snap.exists()) { toast('No pending profiles', false); return; }
+      const updates = {};
+      const userUpdates = {};
+      snap.forEach(c => {
+        const v = c.val();
+        updates['profileRequests/'+c.key+'/status'] = 'approved';
+        if(v.uid) {
+          userUpdates['users/'+v.uid+'/approved'] = true;
+          userUpdates['users/'+v.uid+'/profileUpdatePending'] = false;
+          userUpdates['users/'+v.uid+'/ign'] = v.ign||'';
+          userUpdates['users/'+v.uid+'/ffuid'] = v.ffuid||'';
+        }
+      });
+      await db.ref().update({...updates, ...userUpdates});
+      await logAudit('bulk_approve_profiles', 'All pending profiles approved');
+      toast('All pending profiles approved!');
+      loadProfileVerification();
+    } catch(e) { toast('Failed: '+e.message, true); }
+  });
+}
+
+// ═══════════════════════════════════════════
+// VOUCHER MANAGEMENT
+// ═══════════════════════════════════════════
+async function loadVouchers() {
+  showLoading('voucher-loading', true);
+  showTable('voucher-table', false);
+  showEmpty('voucher-empty', false);
+  try {
+    const snap = await db.ref('vouchers').once('value');
+    const vouchers = [];
+    if(snap.exists()) snap.forEach(c => vouchers.push({code: c.key, ...c.val()}));
+    showLoading('voucher-loading', false);
+    if(!vouchers.length) { showEmpty('voucher-empty', true); return; }
+    showTable('voucher-table', true);
+    document.getElementById('voucher-tbody').innerHTML = vouchers.map(v => `
+      <tr>
+        <td><strong style="color:var(--primary);letter-spacing:2px;">${sanitize(v.code)}</strong></td>
+        <td>${v.coins||0} ◎</td>
+        <td>₹${v.money||0}</td>
+        <td>${v.expiry ? new Date(v.expiry).toLocaleDateString() : 'Never'}</td>
+        <td>${v.used ? '<span style="color:var(--danger)">Used</span>' : '<span style="color:#0f0">Active</span>'}</td>
+        <td><button class="btn btn-outline-danger btn-xs" onclick="deleteVoucher('${v.code}')">✕ Delete</button></td>
+      </tr>`).join('');
+  } catch(e) { toast('Failed: '+e.message, true); showLoading('voucher-loading', false); }
+}
+
+function openCreateVoucher() {
+  const modal = document.getElementById('modal-create-voucher');
+  if(modal) { modal.classList.add('active'); return; }
+  // Create inline modal
+  const overlay = document.createElement('div');
+  overlay.id = 'modal-create-voucher';
+  overlay.className = 'modal-overlay active';
+  overlay.innerHTML = `<div class="modal"><div class="modal-header"><h2 class="modal-title">◈ Create Voucher</h2><button class="btn btn-icon btn-outline" data-close-modal="modal-create-voucher">✕</button></div><div class="modal-body">
+    <div class="form-group"><label class="form-label">Voucher Code</label><input type="text" class="form-input" id="vc-code" placeholder="e.g. SAVE100" style="text-transform:uppercase;"></div>
+    <div class="form-group"><label class="form-label">Coins Reward</label><input type="number" class="form-input" id="vc-coins" placeholder="0" min="0"></div>
+    <div class="form-group"><label class="form-label">Money Reward (₹)</label><input type="number" class="form-input" id="vc-money" placeholder="0" min="0"></div>
+    <div class="form-group"><label class="form-label">Expiry Date (optional)</label><input type="date" class="form-input" id="vc-expiry"></div>
+    <div class="modal-footer"><button class="btn btn-primary" onclick="createVoucher()">✓ Create</button><button class="btn btn-outline" data-close-modal="modal-create-voucher">Cancel</button></div>
+  </div></div>`;
+  overlay.addEventListener('click', e => { if(e.target===overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+  document.querySelectorAll('[data-close-modal="modal-create-voucher"]').forEach(b => b.addEventListener('click', () => overlay.remove()));
+}
+
+async function createVoucher() {
+  const code = document.getElementById('vc-code')?.value.trim().toUpperCase();
+  const coins = parseInt(document.getElementById('vc-coins')?.value)||0;
+  const money = parseInt(document.getElementById('vc-money')?.value)||0;
+  const expiry = document.getElementById('vc-expiry')?.value;
+  if(!code) { toast('Enter voucher code', true); return; }
+  if(!coins && !money) { toast('Set coins or money reward', true); return; }
+  try {
+    await db.ref('vouchers/'+code).set({coins, money, used: false, expiry: expiry ? new Date(expiry).getTime() : null, createdAt: Date.now()});
+    await logAudit('create_voucher', 'Voucher '+code+' created');
+    document.getElementById('modal-create-voucher')?.remove();
+    toast('Voucher created!');
+    loadVouchers();
+  } catch(e) { toast('Failed: '+e.message, true); }
+}
+
+async function deleteVoucher(code) {
+  showConfirm('Delete voucher '+code+'?', async () => {
+    await db.ref('vouchers/'+code).remove();
+    await logAudit('delete_voucher', 'Voucher '+code+' deleted');
+    toast('Voucher deleted!');
+    loadVouchers();
+  });
+}
+
+// ═══════════════════════════════════════════
+// REFERRAL MANAGEMENT
+// ═══════════════════════════════════════════
+async function loadReferrals() {
+  showLoading('referral-loading', true);
+  showTable('referral-table', false);
+  showEmpty('referral-empty', false);
+  try {
+    const snap = await db.ref('referrals').once('value');
+    const refs = [];
+    if(snap.exists()) snap.forEach(c => refs.push({id: c.key, ...c.val()}));
+    refs.sort((a,b) => (b.createdAt||0)-(a.createdAt||0));
+    // Update badge
+    const pending = refs.filter(r => r.status==='pending').length;
+    const badge = document.getElementById('badge-referrals');
+    if(badge) { badge.textContent = pending; badge.style.display = pending>0?'flex':'none'; }
+    showLoading('referral-loading', false);
+    if(!refs.length) { showEmpty('referral-empty', true); return; }
+    showTable('referral-table', true);
+    document.getElementById('referral-tbody').innerHTML = refs.map(r => `
+      <tr>
+        <td style="font-size:11px;color:var(--text-secondary);">${sanitize(r.uid||'-').slice(0,16)}...</td>
+        <td><strong style="color:var(--primary)">${sanitize(r.code||'-')}</strong></td>
+        <td>${fmtDate(r.createdAt)}</td>
+        <td>${statusBadge(r.status)}</td>
+        <td>
+          ${r.status==='pending'?`<button class="btn btn-primary btn-xs" onclick="approveReferral('${r.id}','${r.uid}')">✓ Approve</button>
+          <button class="btn btn-outline-danger btn-xs" onclick="rejectReferral('${r.id}')">✕</button>`:'—'}
+        </td>
+      </tr>`).join('');
+  } catch(e) { toast('Failed: '+e.message, true); showLoading('referral-loading', false); }
+}
+
+async function approveReferral(id, uid) {
+  try {
+    await db.ref('referrals/'+id).update({status:'approved'});
+    // Give bonus coins (10 coins for referral)
+    const uSnap = await db.ref('users/'+uid).once('value');
+    if(uSnap.exists()) {
+      const u = uSnap.val();
+      await db.ref('users/'+uid).update({coins: (u.coins||0)+10});
+      await db.ref('users/'+uid+'/coinHistory').push({type:'referral_bonus',amount:10,createdAt:Date.now()});
+      await sendNotifToUser(uid, 'Referral Bonus!', 'Your refer code was approved! +10 coins added.');
+    }
+    await logAudit('approve_referral', 'Referral '+id+' approved for '+uid);
+    toast('Referral approved! +10 coins given.');
+    loadReferrals();
+  } catch(e) { toast('Failed: '+e.message, true); }
+}
+
+async function rejectReferral(id) {
+  await db.ref('referrals/'+id).update({status:'rejected'});
+  await logAudit('reject_referral', 'Referral '+id+' rejected');
+  toast('Referral rejected.');
+  loadReferrals();
+}
+
+// ═══════════════════════════════════════════
+// FINANCIAL REPORT
+// ═══════════════════════════════════════════
+async function loadFinancialReport() {
+  document.getElementById('fr-loading').style.display='flex';
+  document.getElementById('fr-table').style.display='none';
+  try {
+    const [depSnap, wdSnap, usersSnap] = await Promise.all([
+      db.ref('addMoneyRequests').once('value'),
+      db.ref('withdrawRequests').once('value'),
+      db.ref('users').once('value')
+    ]);
+    let totalDep=0, totalWd=0, totalPrizes=0;
+    const rows = [];
+    if(depSnap.exists()) depSnap.forEach(c => {
+      const v=c.val();
+      if(v.status==='approved') totalDep+=(v.amount||0);
+      rows.push({type:'Deposit', user:v.uid?.slice(-8)||'-', amount:v.amount||0, date:v.createdAt, status:v.status});
+    });
+    if(wdSnap.exists()) wdSnap.forEach(c => {
+      const v=c.val();
+      if(v.status==='approved') totalWd+=(v.amount||0);
+      rows.push({type:'Withdraw', user:v.uid?.slice(-8)||'-', amount:v.amount||0, date:v.createdAt, status:v.status});
+    });
+    if(usersSnap.exists()) usersSnap.forEach(u => {
+      const rm=(u.val().realMoney||{});
+      totalPrizes+=(rm.winnings||0);
+    });
+    document.getElementById('fr-total-dep').textContent = totalDep.toLocaleString('en-IN');
+    document.getElementById('fr-total-wd').textContent = totalWd.toLocaleString('en-IN');
+    document.getElementById('fr-net').textContent = (totalDep-totalWd).toLocaleString('en-IN');
+    document.getElementById('fr-prizes').textContent = totalPrizes.toLocaleString('en-IN');
+    rows.sort((a,b)=>(b.date||0)-(a.date||0));
+    document.getElementById('fr-loading').style.display='none';
+    document.getElementById('fr-table').style.display='block';
+    document.getElementById('fr-tbody').innerHTML = rows.map(r => `
+      <tr>
+        <td><span style="color:${r.type==='Deposit'?'var(--primary)':'var(--danger)'};">${r.type}</span></td>
+        <td style="font-size:11px;">...${sanitize(r.user)}</td>
+        <td style="color:${r.type==='Deposit'?'var(--primary)':'var(--danger)'};">₹${r.amount}</td>
+        <td>${fmtDate(r.date)}</td>
+        <td>${statusBadge(r.status)}</td>
+      </tr>`).join('');
+  } catch(e) { toast('Failed: '+e.message, true); document.getElementById('fr-loading').style.display='none'; }
+}
+
+function exportFinancialCSV() {
+  const rows = document.querySelectorAll('#fr-tbody tr');
+  let csv = 'Type,User,Amount,Date,Status\n';
+  rows.forEach(r => {
+    const cells = r.querySelectorAll('td');
+    csv += Array.from(cells).map(c=>'"'+c.textContent.trim()+'"').join(',')+'\n';
+  });
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'financial_report_'+Date.now()+'.csv';
+  a.click();
+}
+
+// ═══════════════════════════════════════════
+// AUDIT LOG
+// ═══════════════════════════════════════════
+async function logAudit(action, details) {
+  if(!currentAdmin) return;
+  try {
+    await db.ref('auditLog').push({
+      action, details,
+      adminEmail: currentAdmin.email||'admin',
+      timestamp: Date.now()
+    });
+  } catch(e) {}
+}
+
+async function loadAuditLog() {
+  showLoading('audit-loading', true);
+  showTable('audit-table', false);
+  showEmpty('audit-empty', false);
+  try {
+    const snap = await db.ref('auditLog').limitToLast(100).once('value');
+    const logs = [];
+    if(snap.exists()) snap.forEach(c => logs.push({id:c.key,...c.val()}));
+    logs.reverse();
+    showLoading('audit-loading', false);
+    if(!logs.length) { showEmpty('audit-empty', true); return; }
+    showTable('audit-table', true);
+    document.getElementById('audit-tbody').innerHTML = logs.map(l => `
+      <tr>
+        <td><strong style="color:var(--primary);">${sanitize(l.action||'-')}</strong></td>
+        <td style="font-size:11px;color:var(--text-secondary);">${sanitize(l.adminEmail||'-')}</td>
+        <td style="font-size:11px;">${sanitize(l.target||'-')}</td>
+        <td style="font-size:11px;color:var(--text-secondary);">${sanitize(l.details||'-')}</td>
+        <td>${fmtDate(l.timestamp)}</td>
+      </tr>`).join('');
+  } catch(e) { toast('Failed: '+e.message, true); showLoading('audit-loading', false); }
+}
+
+function exportAuditCSV() {
+  const rows = document.querySelectorAll('#audit-tbody tr');
+  let csv = 'Action,Admin,Target,Details,Date\n';
+  rows.forEach(r => {
+    const cells = r.querySelectorAll('td');
+    csv += Array.from(cells).map(c=>'"'+c.textContent.trim()+'"').join(',')+'\n';
+  });
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'audit_log_'+Date.now()+'.csv';
+  a.click();
+}
+
+// ═══════════════════════════════════════════
+// EXPORT USERS CSV
+// ═══════════════════════════════════════════
+function exportUsersCSV() {
+  const rows = document.querySelectorAll('#users-tbody tr');
+  let csv = 'Name,IGN,FF UID,Coins,Balance,Status\n';
+  rows.forEach(r => {
+    const cells = r.querySelectorAll('td');
+    if(cells.length>1) csv += Array.from(cells).slice(1,7).map(c=>'"'+c.textContent.trim()+'"').join(',')+'\n';
+  });
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'users_'+Date.now()+'.csv';
+  a.click();
+}
+
+// Add audit logging to existing approve/reject functions
+const _origApproveProfile = typeof approveProfile !== 'undefined' ? approveProfile : null;
+
 // ═══════════════════════════════════════════
 // MODAL CLOSE
 // ═══════════════════════════════════════════
+
 function closeModal(id) {
   const el = document.getElementById(id);
   if(el) el.classList.remove('active');
 }
 
-document.querySelectorAll('[data-close-modal]').forEach(btn=>{
-  btn.addEventListener('click', ()=>closeModal(btn.dataset.closeModal));
-});
-document.querySelectorAll('.modal-overlay').forEach(o=>{
-  o.addEventListener('click', e=>{ if(e.target===o) o.classList.remove('active'); });
-});
+// moved to DOMContentLoaded
+// moved to DOMContentLoaded
 
 // Confirm modal
-document.getElementById('confirm-ok').addEventListener('click', ()=>{
-  if(confirmCallback) confirmCallback();
-  document.getElementById('confirm-modal').classList.remove('active');
-  confirmCallback = null;
-});
-document.getElementById('confirm-cancel').addEventListener('click', ()=>{
-  document.getElementById('confirm-modal').classList.remove('active');
-  confirmCallback = null;
-});
+// moved to DOMContentLoaded
 
 // ═══════════════════════════════════════════
 // SIDEBAR NAV
@@ -3998,8 +4846,8 @@ document.getElementById('confirm-cancel').addEventListener('click', ()=>{
 document.querySelectorAll('[data-section]').forEach(item=>{
   item.addEventListener('click', ()=>showSection(item.dataset.section));
 });
-document.getElementById('sidebar-overlay').addEventListener('click', closeSidebar);
-document.getElementById('hamburger-btn')?.addEventListener('click', toggleSidebar);
+document.getElementById('sidebar-overlay')?.addEventListener('click', closeSidebar);
+// hamburger removed
 
 </script>
 </body>
