@@ -62,7 +62,9 @@ body {
   line-height: 1.5;
   overflow-x: hidden;
   overflow-y: auto;
+  min-height: 100vh;
 }
+html { height: 100%; }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
@@ -777,6 +779,8 @@ table { border-collapse: collapse; width: 100%; }
   flex: 1;
   background: var(--bg-primary);
   overflow-y: auto;
+  min-height: 100vh;
+  width: calc(100% - var(--sidebar-width));
 }
 
 .content-wrapper {
@@ -1785,6 +1789,8 @@ table { border-collapse: collapse; width: 100%; }
   .main-content {
     margin-left: 0;
     overflow-y: visible;
+    width: 100%;
+    min-height: 100vh;
   }
 
   .content-wrapper {
@@ -2193,7 +2199,7 @@ table { border-collapse: collapse; width: 100%; }
             </div>
           </div>
           <div style="background:var(--card-bg);border:1px solid rgba(255,215,0,0.2);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;">
-            <span style="font-size:22px;">◎</span>
+            <span style="font-size:22px;">🪙</span>
             <div>
               <div style="font-size:11px;color:#aaa;">Total Matches Played Today</div>
               <div style="font-size:22px;font-weight:900;color:var(--primary);" id="stat-matches-today">0</div>
@@ -2403,12 +2409,21 @@ table { border-collapse: collapse; width: 100%; }
         </div>
 
         <div class="panel">
-          <div class="panel-header">
+          <div class="panel-header" style="flex-direction:column;align-items:stretch;gap:12px;">
             <h3 class="panel-title">All Tournaments</h3>
-            <div class="search-box">
-              <span class="search-box-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-              <input type="text" placeholder="Search tournaments..." id="search-tournaments">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <button id="tourney-btn-paid" onclick="filterTourneyType('paid')" style="padding:14px 10px;border-radius:14px;border:2px solid var(--primary);background:linear-gradient(135deg,rgba(255,215,0,0.18),rgba(255,180,0,0.06));color:var(--primary);font-family:var(--font-body);font-size:14px;font-weight:800;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:5px;">
+                <span style="font-size:22px;">💰</span>
+                <span>Paid Matches</span>
+                <span style="font-size:10px;font-weight:600;opacity:.7;">Entry: Real Money</span>
+              </button>
+              <button id="tourney-btn-coin" onclick="filterTourneyType('coin')" style="padding:14px 10px;border-radius:14px;border:2px solid rgba(100,200,255,0.4);background:linear-gradient(135deg,rgba(100,200,255,0.08),rgba(50,150,255,0.03));color:#64c8ff;font-family:var(--font-body);font-size:14px;font-weight:800;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:5px;opacity:.65;">
+                <span style="font-size:22px;">🪙</span>
+                <span>Coin Matches</span>
+                <span style="font-size:10px;font-weight:600;opacity:.7;">Entry: Coins</span>
+              </button>
             </div>
+            <input type="hidden" id="search-tournaments" value="">
           </div>
           <div class="table-wrapper">
             <div id="tournaments-loading" class="table-loading">
@@ -2650,7 +2665,7 @@ table { border-collapse: collapse; width: 100%; }
       <!-- ========== SECTION: MATCH RESULTS ========== -->
       <div class="section-page" id="section-match-results">
         <div class="page-header">
-          <h1 class="page-title"><span class="page-title-icon" style="color:var(--danger)">◎</span>Match Results</h1>
+          <h1 class="page-title"><span class="page-title-icon" style="color:var(--danger)">🪙</span>Match Results</h1>
         </div>
 
         <div class="panel">
@@ -2902,11 +2917,8 @@ table { border-collapse: collapse; width: 100%; }
                 <label class="form-label">Daily Claim Coins</label>
                 <input type="number" class="form-input" id="settings-daily-coins" placeholder="10" min="0">
               </div>
-              <div class="form-group">
-                <label class="form-label">Kill Reward (coins per kill)</label>
-                <input type="number" class="form-input" id="settings-kill-reward" placeholder="5" min="0">
-              </div>
             </div>
+            <input type="hidden" id="settings-kill-reward" value="0">
           </div>
 
           <!-- Ticker Settings -->
@@ -2927,7 +2939,7 @@ table { border-collapse: collapse; width: 100%; }
 
 
       <!-- ========== SECTION: VOUCHER MANAGEMENT ========== -->
-      <div class="section-page" id="section-voucher-management">
+      <div class="section-page" id="section-voucher-management" style="min-height:100vh;">
         <div class="page-header">
           <h1 class="page-title"><span class="page-title-icon" style="color:var(--primary)">◈</span>Voucher Management</h1>
           <div class="page-actions">
@@ -3492,38 +3504,52 @@ document.getElementById('logout-btn')?.addEventListener('click', ()=>{
 // BADGE LISTENERS (real-time counts)
 // ═══════════════════════════════════════════
 function setupBadgeListeners() {
-  const badges = [
-    ['profileRequests', 'badge-profile-verification'],
-    ['profileUpdateRequests', 'badge-profile-updates'],
-    ['joinRequests', 'badge-join-requests'],
-    ['teamRequests', 'badge-team-requests'],
-    ['supportRequests', 'badge-support-requests']
-  ];
-  badges.forEach(([path, id])=>{
-    db.ref(path).on('value', snap=>{
-      let count = 0;
-      if(snap.exists()) {
-        snap.forEach(c=>{ if((c.val().status||'pending')==='pending') count++; });
-      }
-      const el = document.getElementById(id);
-      if(el) { el.textContent = count; el.style.display = count>0?'flex':'none'; }
-    });
-  });
-  // Wallet badge: add + withdraw pending
-  function updateWalletBadge() {
-    let total = 0;
-    Promise.all([
-      db.ref('addMoneyRequests').once('value'),
-      db.ref('withdrawRequests').once('value')
-    ]).then(([a,w])=>{
-      if(a.exists()) a.forEach(c=>{ if(c.val().status==='pending') total++; });
-      if(w.exists()) w.forEach(c=>{ if(c.val().status==='pending') total++; });
-      const el = document.getElementById('badge-wallet-requests');
-      if(el) { el.textContent = total; el.style.display = total>0?'flex':'none'; }
-    });
+  function countPending(snap) {
+    let c = 0;
+    if(snap.exists()) snap.forEach(ch=>{ if((ch.val().status||'pending')==='pending') c++; });
+    return c;
   }
-  db.ref('addMoneyRequests').on('value', updateWalletBadge);
-  db.ref('withdrawRequests').on('value', updateWalletBadge);
+  function setBadge(id, count) {
+    const el = document.getElementById(id);
+    if(el) { el.textContent = count; el.style.display = count>0?'flex':'none'; }
+  }
+  // Profile verification - only pending
+  db.ref('profileRequests').orderByChild('status').equalTo('pending').on('value', snap=>{
+    setBadge('badge-profile-verification', snap.exists() ? snap.numChildren() : 0);
+  });
+  // Profile updates - only pending
+  db.ref('profileUpdateRequests').orderByChild('status').equalTo('pending').on('value', snap=>{
+    setBadge('badge-profile-updates', snap.exists() ? snap.numChildren() : 0);
+  });
+  // Join requests - only pending
+  db.ref('joinRequests').orderByChild('status').equalTo('pending').on('value', snap=>{
+    setBadge('badge-join-requests', snap.exists() ? snap.numChildren() : 0);
+  });
+  // Team requests - only pending
+  db.ref('teamRequests').orderByChild('status').equalTo('pending').on('value', snap=>{
+    setBadge('badge-team-requests', snap.exists() ? snap.numChildren() : 0);
+  });
+  // Support requests - only open/pending
+  db.ref('supportRequests').orderByChild('status').equalTo('pending').on('value', snap=>{
+    setBadge('badge-support-requests', snap.exists() ? snap.numChildren() : 0);
+  });
+  // Wallet badge: add + withdraw pending combined
+  let walletPending = {add:0, wd:0};
+  function updateWalletBadge() {
+    setBadge('badge-wallet-requests', walletPending.add + walletPending.wd);
+  }
+  db.ref('addMoneyRequests').orderByChild('status').equalTo('pending').on('value', snap=>{
+    walletPending.add = snap.exists() ? snap.numChildren() : 0;
+    updateWalletBadge();
+  });
+  db.ref('withdrawRequests').orderByChild('status').equalTo('pending').on('value', snap=>{
+    walletPending.wd = snap.exists() ? snap.numChildren() : 0;
+    updateWalletBadge();
+  });
+  // Referrals pending badge
+  db.ref('referrals').orderByChild('status').equalTo('pending').on('value', snap=>{
+    setBadge('badge-referrals', snap.exists() ? snap.numChildren() : 0);
+  });
 }
 
 // ═══════════════════════════════════════════
@@ -3847,7 +3873,7 @@ function deleteUser(uid, name) {
 // ═══════════════════════════════════════════
 // TOURNAMENTS
 // ═══════════════════════════════════════════
-let toursData = [];
+// toursData declared with filterTourneyType above
 async function loadTournaments() {
   showLoading('tournaments-loading',true); showTable('tournaments-table',false); showEmpty('tournaments-empty',false);
   try {
@@ -3855,7 +3881,7 @@ async function loadTournaments() {
     toursData = [];
     if(snap.exists()) snap.forEach(c=>toursData.push({id:c.key,...c.val()}));
     toursData.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-    renderTournaments(toursData);
+    filterTourneyType(tourneyCurFilter);
   } catch(e) { toast('Failed',true); }
   showLoading('tournaments-loading',false);
 }
@@ -3867,10 +3893,29 @@ function computeStatus(mt) {
   return 'completed';
 }
 
+let tourneyCurFilter = 'paid';
+let toursData = [];
+function filterTourneyType(type) {
+  tourneyCurFilter = type;
+  const pb = document.getElementById('tourney-btn-paid');
+  const cb = document.getElementById('tourney-btn-coin');
+  if(type === 'paid') {
+    if(pb) { pb.style.opacity='1'; pb.style.borderColor='var(--primary)'; pb.style.background='linear-gradient(135deg,rgba(255,215,0,0.18),rgba(255,180,0,0.06))'; }
+    if(cb) { cb.style.opacity='.5'; cb.style.borderColor='rgba(100,200,255,0.25)'; }
+  } else {
+    if(cb) { cb.style.opacity='1'; cb.style.borderColor='#64c8ff'; cb.style.background='linear-gradient(135deg,rgba(100,200,255,0.18),rgba(50,150,255,0.08))'; }
+    if(pb) { pb.style.opacity='.5'; pb.style.borderColor='rgba(255,215,0,0.25)'; }
+  }
+  renderTournaments(toursData);
+}
 function renderTournaments(data) {
-  const _st=document.getElementById('search-tournaments');
-  const q = (_st?_st.value:'').toLowerCase();
-  const filtered = q ? data.filter(t=>(t.name||'').toLowerCase().includes(q)) : data;
+  const q = '';
+  let filtered = data;
+  if(tourneyCurFilter === 'paid') {
+    filtered = data.filter(t => t.entryType === 'paid');
+  } else {
+    filtered = data.filter(t => t.entryType !== 'paid');
+  }
   const tbody = document.getElementById('tournaments-tbody');
   if(!filtered.length) { showEmpty('tournaments-empty',true); showTable('tournaments-table',false); showFooter('tournaments-footer',false); return; }
   showEmpty('tournaments-empty',false); showTable('tournaments-table',true); showFooter('tournaments-footer',true);
@@ -3880,7 +3925,7 @@ function renderTournaments(data) {
       <td><strong>${sanitize(t.name||'-')}</strong></td>
       <td>${sanitize(t.gameMode||'-')}</td>
       <td>${sanitize(t.map||'-')}</td>
-      <td>${t.entryType==='paid'?'₹'+t.entryFee:'◎'+t.entryFee}</td>
+      <td>${t.entryType==='paid'?'₹'+t.entryFee:'🪙'+t.entryFee}</td>
       <td>₹${t.prizePool||0}</td>
       <td>${t.filledSlots||0}/${t.maxSlots||12}</td>
       <td style="font-size:12px">${fmtDate(t.matchTime)}</td>
@@ -3893,7 +3938,7 @@ function renderTournaments(data) {
     </tr>`).join('');
 }
 
-document.getElementById('search-tournaments')?.addEventListener('input', ()=>renderTournaments(toursData));
+// Tournament filter via Paid/Coin buttons
 document.getElementById('create-tournament-btn')?.addEventListener('click', ()=>openCreateTournament());
 
 function openCreateTournament() {
@@ -4455,7 +4500,7 @@ async function loadSettings() {
     }
     if(cSnap.exists()) {
       const c = cSnap.val();
-      document.getElementById('settings-kill-reward').value = c.killReward||5;
+      // kill-reward removed from UI
       document.getElementById('settings-daily-coins').value = c.dailyCoins||10;
       document.getElementById('settings-referrer-coins').value = c.referrerCoins||50;
       document.getElementById('settings-referee-coins').value = c.refereeCoins||25;
